@@ -31,9 +31,10 @@ Fine-tuning pipeline for the Mininio Carb & Insulin Calc app's on-device AI assi
 ## Setup
 
 ```bash
-python -m venv .venv
+uv venv
+uv pip install -r requirements.txt
 .venv\Scripts\activate   # Windows
-pip install -r requirements.txt
+# source .venv/bin/activate  # macOS/Linux
 ```
 
 ## Related

@@ -8,3 +8,4 @@ output/
 checkpoints/
 models/
 .ipynb_checkpoints/
+.vscode/
