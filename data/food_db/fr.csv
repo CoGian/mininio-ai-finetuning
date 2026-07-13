@@ -1,1 +1,107 @@
-
+Food;Quantity(g/ml);Quantity(item);Carbohydrates(g)
+Gaufre (diamètre 10x10);;1 pcs;15 g
+Flocons d'avoine Quaker (flocons-pain);20 g;2 c. à s.;15 g
+Céréales Special K Kellogg's;20 g;0.333 tasse;15 g
+Bagel de Thessalonique;;0.5 pcs;15 g
+Petits crackers ronds salés;;5 pcs;15 g
+Crêpe (diamètre 20cm);;0.5 pcs;15 g
+Gressins (longueur 20cm, diam 1.2cm);;2 pcs;15 g
+Gressins (longueur 10cm, diam 1.2cm);;4 pcs;15 g
+Gressins (longueur 10cm, diam 0.6cm);;6 pcs;15 g
+Croûtons;;1 tasse;15 g
+Muffin;;0.5 pcs;15 g
+Biscuits cream cracker;;2 pcs;15 g
+Biscuits petit beurre;;2 pcs;15 g
+Biscottes Krispis;;2 pcs;15 g
+Tarte (diamètre 15cm);;0.5 pcs;15 g
+Chips de maïs Doritas;25 g;;15 g
+Petites biscottes;;2 pcs;15 g
+Toast Melba (allongé);;5 pcs;15 g
+Chapelure;;3 c. à s.;15 g
+Pain blanc (tous types);30 g;1 tranche;15 g
+Pain complet de seigle ou d'avoine;30 g;1 tranche;15 g
+Pain de mie;;1 tranche;15 g
+Pains à hamburger;30 g;0.5 pcs;15 g
+Pain à hot dog;30 g;0.5 pcs;15 g
+Farine;20 g;2.5 c. à s.;15 g
+Couscous (cuit);60 g;0.333 tasse;15 g
+Corn Flakes;;0.5 tasse;15 g
+Pâtes-orzo-nouilles (cuites);60 g;0.333 tasse;15 g
+Son de blé (bouilli);;3 c. à s.;15 g
+Pop-corn (micro-ondes);;3 tasse;15 g
+Riz (cuit) blanc ou complet;60 g;0.333 tasse;15 g
+Kiwi;100 g;;15 g
+Ananas (frais);100 g;;15 g
+Poire;110 g;;15 g
+Abricots;150 g;;15 g
+Pamplemousse;330 g;;15 g
+Prunes (fraîches);140 g;;15 g
+Pastèque;200 g;;15 g
+Cerises;85 g;;15 g
+Mangue;160 g;;15 g
+Mandarine;220 g;;15 g
+Pomme;120 g;;15 g
+Banane;120 g;;15 g
+Nectarine;140 g;;15 g
+Melon;280 g;;15 g
+Orange;118 g;;15 g
+Pêche;110 g;;15 g
+Raisins secs;17 g;;15 g
+Raisins;85 g;;15 g
+Fraises;170 g;;15 g
+Concombre;230 g;2 tasse;5 g
+Artichaut (bouilli);55 g;0.33 tasse;5 g
+Carottes (bouillies);90 g;1.5 tasse;5 g
+Carottes (crues);52 g;0.5 tasse;5 g
+Courgettes (bouillies);180 g;1 tasse;5 g
+Oignons (secs);55 g;0.333 tasse;5 g
+Oignons verts;75 g;0.75 tasse;5 g
+Chou-fleur (bouilli);120 g;1 tasse;5 g
+Chou-fleur (cru);100 g;1 tasse;5 g
+Chou blanc (cru);86 g;1.33 tasse;5 g
+Chou blanc (bouilli);90 g;0.5 tasse;5 g
+Chou rouge (cru);70 g;1 tasse;5 g
+Choux de Bruxelles;55 g;0.333 tasse;5 g
+Tomate;125 g;1 pcs;5 g
+Champignons (crus);98 g;0.5 tasse;5 g
+Champignons (bouillis);95 g;0.5 tasse;5 g
+Laitue (crue);135 g;1 tasse;5 g
+Laitue iceberg (crue);168 g;3 tasse;5 g
+Aubergine (rôtie);57 g;0.5 tasse;5 g
+Brocoli (bouilli);80 g;0.5 tasse;5 g
+Gombo (bouilli);70 g;0.5 tasse;5 g
+Betteraves (bouillies);50 g;1 pcs;5 g
+Poivron vert (cru);110 g;1 pcs;5 g
+Poivron rouge (cru);82 g;0.5 tasse;5 g
+Poireaux (bouillis);65 g;0.5 tasse;5 g
+Radis (crus);;1 tasse;5 g
+Céleri (bouilli);125 g;0.75 tasse;5 g
+Épinards (bouillis);135 g;0.75 tasse;5 g
+Asperges (bouillies);120 g;8 pcs;5 g
+Légumes verts (bouillis, toutes sortes);105 g;3/4 tasse;5 g
+Pois cassés jaunes;75 g;0.5 tasse;15 g
+Pois chiches;75 g;0.5 tasse;15 g
+Haricots;75 g;0.5 tasse;15 g
+Lentilles;75 g;0.5 tasse;15 g
+Haricots écossés (cuits);75 g;0.333 tasse;15 g
+Petits pois (cuits);100 g;0.5 tasse;15 g
+Patate douce (cuite au four);;0.5 pcs moyen;15 g
+Maïs (bouilli);;0.5 tasse;15 g
+Maïs (entier);140 g;0.5 grands pcs;15 g
+Châtaignes;;4 grands pcs;15 g
+Pommes de terre;85 g;1 petits pcs;15 g
+Pomme de terre (bouillie);70 g;0.5 tasse;15 g
+Purée de pommes de terre avec lait 1,5%;87 g;0.5 tasse;15 g
+Haricots verts (avec graines, cuits);187 g;1.5 tasse;15 g
+Lait écrémé;240 ml;1 tasse;12 g
+Lait 1% ou 1,5% de matières grasses ou babeurre 1,5%;240 ml;1 tasse;12 g
+Lait écrémé en poudre;80 ml;0.333 tasse;12 g
+Lait évaporé (sans matières grasses);120 ml;0.5 tasse;12 g
+Lait de soja (non sucré);240 ml;1 tasse;12 g
+Yaourt;180 g;1 tasse;12 g
+Lait 2% de matières grasses;240 ml;1 tasse;12 g
+Yaourt au lait 2% de matières grasses;180 g;1 tasse;12 g
+Lait entier;240 ml;1 tasse;12 g
+Lait évaporé (en conserve);120 ml;1/2 tasse;12 g
+Lait de chèvre;240 ml;1 tasse;12 g
+Kéfir;240 ml;1 tasse;12 g

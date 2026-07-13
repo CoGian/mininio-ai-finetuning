@@ -1,1 +1,107 @@
-
+Food;Quantity(g/ml);Quantity(item);Carbohydrates(g)
+Wafer (diametro 10x10);;1 pz;15 g
+Quaker Oats (fiocchi d'avena);20 g;2 cucch;15 g
+Cereali Special K Kellogg's;20 g;0.333 tazza;15 g
+Koulouri di Salonicco;;0.5 pz;15 g
+Cracker salati rotondi piccoli;;5 pz;15 g
+Crêpe (diametro 20cm);;0.5 pz;15 g
+Grissini (lunghezza 20cm, diam 1.2cm);;2 pz;15 g
+Grissini (lunghezza 10cm, diam 1.2cm);;4 pz;15 g
+Grissini (lunghezza 10cm, diam 0.6cm);;6 pz;15 g
+Crostini;;1 tazza;15 g
+Muffin;;0.5 pz;15 g
+Biscotti cream cracker;;2 pz;15 g
+Biscotti petit beurre;;2 pz;15 g
+Fette biscottate Krispis;;2 pz;15 g
+Torta (diametro 15cm);;0.5 pz;15 g
+Patatine di mais Doritas;25 g;;15 g
+Fette biscottate piccole;;2 pz;15 g
+Toast Melba (allungati);;5 pz;15 g
+Pangrattato;;3 cucch;15 g
+Pane bianco (tutti i tipi);30 g;1 fetta;15 g
+Pane integrale di segale o avena;30 g;1 fetta;15 g
+Pan carré;;1 fetta;15 g
+Panini per hamburger;30 g;0.5 pz;15 g
+Panino per hot dog;30 g;0.5 pz;15 g
+Farina;20 g;2.5 cucch;15 g
+Couscous (cotto);60 g;0.333 tazza;15 g
+Corn Flakes;;0.5 tazza;15 g
+Pasta-orzo-noodles (cotta);60 g;0.333 tazza;15 g
+Crusca di frumento (bollita);;3 cucch;15 g
+Popcorn (microonde);;3 tazza;15 g
+Riso (cotto) bianco o integrale;60 g;0.333 tazza;15 g
+Kiwi;100 g;;15 g
+Ananas (fresco);100 g;;15 g
+Pera;110 g;;15 g
+Albicocche;150 g;;15 g
+Pompelmo;330 g;;15 g
+Prugne (fresche);140 g;;15 g
+Anguria;200 g;;15 g
+Ciliegie;85 g;;15 g
+Mango;160 g;;15 g
+Mandarino;220 g;;15 g
+Mela;120 g;;15 g
+Banana;120 g;;15 g
+Nettarina;140 g;;15 g
+Melone;280 g;;15 g
+Arancia;118 g;;15 g
+Pesca;110 g;;15 g
+Uvetta;17 g;;15 g
+Uva;85 g;;15 g
+Fragole;170 g;;15 g
+Cetriolo;230 g;2 tazza;5 g
+Carciofo (bollito);55 g;0.33 tazza;5 g
+Carote (bollite);90 g;1.5 tazza;5 g
+Carote (crude);52 g;0.5 tazza;5 g
+Zucchine (bollite);180 g;1 tazza;5 g
+Cipolle (secche);55 g;0.333 tazza;5 g
+Cipollotti;75 g;0.75 tazza;5 g
+Cavolfiore (bollito);120 g;1 tazza;5 g
+Cavolfiore (crudo);100 g;1 tazza;5 g
+Cavolo bianco (crudo);86 g;1.33 tazza;5 g
+Cavolo bianco (bollito);90 g;0.5 tazza;5 g
+Cavolo rosso (crudo);70 g;1 tazza;5 g
+Cavoletti di Bruxelles;55 g;0.333 tazza;5 g
+Pomodoro;125 g;1 pz;5 g
+Funghi (crudi);98 g;0.5 tazza;5 g
+Funghi (bolliti);95 g;0.5 tazza;5 g
+Lattuga (cruda);135 g;1 tazza;5 g
+Lattuga iceberg (cruda);168 g;3 tazza;5 g
+Melanzana (arrostita);57 g;0.5 tazza;5 g
+Broccoli (bolliti);80 g;0.5 tazza;5 g
+Okra (bollita);70 g;0.5 tazza;5 g
+Barbabietole (bollite);50 g;1 pz;5 g
+Peperone verde (crudo);110 g;1 pz;5 g
+Peperone rosso (crudo);82 g;0.5 tazza;5 g
+Porri (bolliti);65 g;0.5 tazza;5 g
+Ravanelli (crudi);;1 tazza;5 g
+Sedano (bollito);125 g;0.75 tazza;5 g
+Spinaci (bolliti);135 g;0.75 tazza;5 g
+Asparagi (bolliti);120 g;8 pz;5 g
+Verdure a foglia (bollite, tutti i tipi);105 g;3/4 tazza;5 g
+Piselli secchi gialli;75 g;0.5 tazza;15 g
+Ceci;75 g;0.5 tazza;15 g
+Fagioli;75 g;0.5 tazza;15 g
+Lenticchie;75 g;0.5 tazza;15 g
+Fagioli decorticati (cotti);75 g;0.333 tazza;15 g
+Piselli (cotti);100 g;0.5 tazza;15 g
+Patata dolce (al forno);;0.5 pz medie;15 g
+Mais (bollito);;0.5 tazza;15 g
+Mais (pannocchia);140 g;0.5 pz grandi;15 g
+Castagne;;4 pz grandi;15 g
+Patate;85 g;1 pz piccole;15 g
+Patata (bollita);70 g;0.5 tazza;15 g
+Purè di patate con latte 1.5%;87 g;0.5 tazza;15 g
+Fagiolini (con semi, cotti);187 g;1.5 tazza;15 g
+Latte scremato;240 ml;1 tazza;12 g
+Latte 1% o 1.5% di grassi o latticello 1.5%;240 ml;1 tazza;12 g
+Latte scremato in polvere;80 ml;0.333 tazza;12 g
+Latte evaporato (senza grassi);120 ml;0.5 tazza;12 g
+Latte di soia (non zuccherato);240 ml;1 tazza;12 g
+Yogurt;180 g;1 tazza;12 g
+Latte 2% di grassi;240 ml;1 tazza;12 g
+Yogurt da latte 2% di grassi;180 g;1 tazza;12 g
+Latte intero;240 ml;1 tazza;12 g
+Latte evaporato (in lattina);120 ml;1/2 tazza;12 g
+Latte di capra;240 ml;1 tazza;12 g
+Kefir;240 ml;1 tazza;12 g

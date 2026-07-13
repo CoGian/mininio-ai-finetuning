@@ -1,1 +1,107 @@
-
+Food;Quantity(g/ml);Quantity(item);Carbohydrates(g)
+Waffel (Durchmesser 10x10);;1 Stk.;15 g
+Quaker Haferflocken (Flocken-Brot);20 g;2 EL;15 g
+Special K Kellog's Müsli;20 g;0.333 Tasse;15 g
+Thessaloniki Kringel;;0.5 Stk.;15 g
+Kleine runde Salzcracker;;5 Stk.;15 g
+Crêpe (Durchmesser 20cm);;0.5 Stk.;15 g
+Grissini (Länge 20cm, Durchm. 1.2cm);;2 Stk.;15 g
+Grissini (Länge 10cm, Durchm. 1.2cm);;4 Stk.;15 g
+Grissini (Länge 10cm, Durchm. 0.6cm);;6 Stk.;15 g
+Croûtons;;1 Tasse;15 g
+Muffin;;0.5 Stk.;15 g
+Cream-Cracker-Kekse;;2 Stk.;15 g
+Butterkekse (Petit Beurre);;2 Stk.;15 g
+Krispis Zwieback;;2 Stk.;15 g
+Kuchen (Durchmesser 15cm);;0.5 Stk.;15 g
+Doritos Maischips;25 g;;15 g
+Kleine Zwiebacke;;2 Stk.;15 g
+Melba-Toast (länglich);;5 Stk.;15 g
+Paniermehl;;3 EL;15 g
+Weißbrot (alle Sorten);30 g;1 Scheibe;15 g
+Vollkorn-Roggen- oder Haferbrot;30 g;1 Scheibe;15 g
+Toastbrot;;1 Scheibe;15 g
+Hamburger-Brötchen;30 g;0.5 Stk.;15 g
+Hot-Dog-Brötchen;30 g;0.5 Stk.;15 g
+Mehl;20 g;2.5 EL;15 g
+Couscous (gekocht);60 g;0.333 Tasse;15 g
+Cornflakes;;0.5 Tasse;15 g
+Pasta-Orzo-Nudeln (gekocht);60 g;0.333 Tasse;15 g
+Weizenkleie (gekocht);;3 EL;15 g
+Popcorn (Mikrowelle);;3 Tasse;15 g
+Reis (gekocht) weiß oder braun;60 g;0.333 Tasse;15 g
+Kiwi;100 g;;15 g
+Ananas (frisch);100 g;;15 g
+Birne;110 g;;15 g
+Aprikosen;150 g;;15 g
+Grapefruit;330 g;;15 g
+Pflaumen (frisch);140 g;;15 g
+Wassermelone;200 g;;15 g
+Kirschen;85 g;;15 g
+Mango;160 g;;15 g
+Mandarine;220 g;;15 g
+Apfel;120 g;;15 g
+Banane;120 g;;15 g
+Nektarine;140 g;;15 g
+Melone;280 g;;15 g
+Orange;118 g;;15 g
+Pfirsich;110 g;;15 g
+Rosinen;17 g;;15 g
+Weintrauben;85 g;;15 g
+Erdbeeren;170 g;;15 g
+Gurke;230 g;2 Tasse;5 g
+Artischocke (gekocht);55 g;0.33 Tasse;5 g
+Karotten (gekocht);90 g;1.5 Tasse;5 g
+Karotten (roh);52 g;0.5 Tasse;5 g
+Zucchini (gekocht);180 g;1 Tasse;5 g
+Zwiebeln (trocken);55 g;0.333 Tasse;5 g
+Frühlingszwiebeln;75 g;0.75 Tasse;5 g
+Blumenkohl (gekocht);120 g;1 Tasse;5 g
+Blumenkohl (roh);100 g;1 Tasse;5 g
+Weißkohl (roh);86 g;1.33 Tasse;5 g
+Weißkohl (gekocht);90 g;0.5 Tasse;5 g
+Rotkohl (roh);70 g;1 Tasse;5 g
+Rosenkohl;55 g;0.333 Tasse;5 g
+Tomate;125 g;1 Stk.;5 g
+Pilze (roh);98 g;0.5 Tasse;5 g
+Pilze (gekocht);95 g;0.5 Tasse;5 g
+Kopfsalat (roh);135 g;1 Tasse;5 g
+Eisbergsalat (roh);168 g;3 Tasse;5 g
+Aubergine (gebraten);57 g;0.5 Tasse;5 g
+Brokkoli (gekocht);80 g;0.5 Tasse;5 g
+Okra (gekocht);70 g;0.5 Tasse;5 g
+Rote Bete (gekocht);50 g;1 Stk.;5 g
+Grüne Paprika (roh);110 g;1 Stk.;5 g
+Rote Paprika (roh);82 g;0.5 Tasse;5 g
+Lauch (gekocht);65 g;0.5 Tasse;5 g
+Radieschen (roh);;1 Tasse;5 g
+Sellerie (gekocht);125 g;0.75 Tasse;5 g
+Spinat (gekocht);135 g;0.75 Tasse;5 g
+Spargel (gekocht);120 g;8 Stk.;5 g
+Blattgemüse (gekocht, alle Sorten);105 g;3/4 Tasse;5 g
+Gelbe Schälerbsen;75 g;0.5 Tasse;15 g
+Kichererbsen;75 g;0.5 Tasse;15 g
+Bohnen;75 g;0.5 Tasse;15 g
+Linsen;75 g;0.5 Tasse;15 g
+Geschälte Bohnen (gekocht);75 g;0.333 Tasse;15 g
+Erbsen (gekocht);100 g;0.5 Tasse;15 g
+Süßkartoffel (gebacken);;0.5 mittlere Stk.;15 g
+Mais (gekocht);;0.5 Tasse;15 g
+Mais (ganz);140 g;0.5 große Stk.;15 g
+Esskastanien;;4 große Stk.;15 g
+Kartoffeln;85 g;1 kleine Stk.;15 g
+Kartoffel (gekocht);70 g;0.5 Tasse;15 g
+Kartoffelpüree mit 1.5% Milch;87 g;0.5 Tasse;15 g
+Grüne Bohnen (mit Kernen, gekocht);187 g;1.5 Tasse;15 g
+Magermilch;240 ml;1 Tasse;12 g
+Milch 1% oder 1.5% Fett oder Buttermilch 1.5%;240 ml;1 Tasse;12 g
+Magermilchpulver;80 ml;0.333 Tasse;12 g
+Kondensmilch (fettfrei);120 ml;0.5 Tasse;12 g
+Sojamilch (ungesüßt);240 ml;1 Tasse;12 g
+Joghurt;180 g;1 Tasse;12 g
+Milch 2% Fett;240 ml;1 Tasse;12 g
+Joghurt aus 2% Milch;180 g;1 Tasse;12 g
+Vollmilch;240 ml;1 Tasse;12 g
+Kondensmilch (Dose);120 ml;1/2 Tasse;12 g
+Ziegenmilch;240 ml;1 Tasse;12 g
+Kefir;240 ml;1 Tasse;12 g

@@ -1,1 +1,107 @@
-
+Food;Quantity(g/ml);Quantity(item);Carbohydrates(g)
+Waffle (diâmetro 10x10);;1 un;15 g
+Quaker Aveia (flocos-pão);20 g;2 c. sopa;15 g
+Cereal Special K Kellog's;20 g;0.333 xíc;15 g
+Bagel de Salonica;;0.5 un;15 g
+Bolachas salgadas redondas pequenas;;5 un;15 g
+Crepe (diâmetro 20cm);;0.5 un;15 g
+Palitos de pão (comprimento 20cm, diâm 1.2cm);;2 un;15 g
+Palitos de pão (comprimento 10cm, diâm 1.2cm);;4 un;15 g
+Palitos de pão (comprimento 10cm, diâm 0.6cm);;6 un;15 g
+Croutons;;1 xíc;15 g
+Muffin;;0.5 un;15 g
+Bolachas cream cracker;;2 un;15 g
+Bolachas petit beurre;;2 un;15 g
+Tostas Krispis;;2 un;15 g
+Torta (diâmetro 15cm);;0.5 un;15 g
+Doritas chips de milho;25 g;;15 g
+Tostas pequenas;;2 un;15 g
+Torrada Melba (alongada);;5 un;15 g
+Pão ralado;;3 c. sopa;15 g
+Pão branco (todos os tipos);30 g;1 fatia;15 g
+Pão integral de centeio ou aveia;30 g;1 fatia;15 g
+Pão de forma;;1 fatia;15 g
+Pão de hambúrguer;30 g;0.5 un;15 g
+Pão de cachorro-quente;30 g;0.5 un;15 g
+Farinha;20 g;2.5 c. sopa;15 g
+Cuscuz (cozido);60 g;0.333 xíc;15 g
+Corn Flakes;;0.5 xíc;15 g
+Massa-orzo-talharim (cozida);60 g;0.333 xíc;15 g
+Farelo de trigo (cozido);;3 c. sopa;15 g
+Pipoca (micro-ondas);;3 xíc;15 g
+Arroz (cozido) branco ou integral;60 g;0.333 xíc;15 g
+Kiwi;100 g;;15 g
+Abacaxi (fresco);100 g;;15 g
+Pera;110 g;;15 g
+Damascos;150 g;;15 g
+Toranja;330 g;;15 g
+Ameixas (frescas);140 g;;15 g
+Melancia;200 g;;15 g
+Cerejas;85 g;;15 g
+Manga;160 g;;15 g
+Tangerina;220 g;;15 g
+Maçã;120 g;;15 g
+Banana;120 g;;15 g
+Nectarina;140 g;;15 g
+Melão;280 g;;15 g
+Laranja;118 g;;15 g
+Pêssego;110 g;;15 g
+Uvas-passas;17 g;;15 g
+Uvas;85 g;;15 g
+Morangos;170 g;;15 g
+Pepino;230 g;2 xíc;5 g
+Alcachofra (cozida);55 g;0.33 xíc;5 g
+Cenouras (cozidas);90 g;1.5 xíc;5 g
+Cenouras (cruas);52 g;0.5 xíc;5 g
+Abobrinha (cozida);180 g;1 xíc;5 g
+Cebolas (secas);55 g;0.333 xíc;5 g
+Cebolinhas;75 g;0.75 xíc;5 g
+Couve-flor (cozida);120 g;1 xíc;5 g
+Couve-flor (crua);100 g;1 xíc;5 g
+Repolho branco (cru);86 g;1.33 xíc;5 g
+Repolho branco (cozido);90 g;0.5 xíc;5 g
+Repolho roxo (cru);70 g;1 xíc;5 g
+Couve-de-bruxelas;55 g;0.333 xíc;5 g
+Tomate;125 g;1 un;5 g
+Cogumelos (crus);98 g;0.5 xíc;5 g
+Cogumelos (cozidos);95 g;0.5 xíc;5 g
+Alface (crua);135 g;1 xíc;5 g
+Alface americana (crua);168 g;3 xíc;5 g
+Berinjela (assada);57 g;0.5 xíc;5 g
+Brócolis (cozido);80 g;0.5 xíc;5 g
+Quiabo (cozido);70 g;0.5 xíc;5 g
+Beterraba (cozida);50 g;1 un;5 g
+Pimentão verde (cru);110 g;1 un;5 g
+Pimentão vermelho (cru);82 g;0.5 xíc;5 g
+Alho-poró (cozido);65 g;0.5 xíc;5 g
+Rabanetes (crus);;1 xíc;5 g
+Aipo (cozido);125 g;0.75 xíc;5 g
+Espinafre (cozido);135 g;0.75 xíc;5 g
+Aspargos (cozidos);120 g;8 un;5 g
+Folhas verdes (cozidas, todos os tipos);105 g;3/4 xíc;5 g
+Ervilhas secas amarelas;75 g;0.5 xíc;15 g
+Grão-de-bico;75 g;0.5 xíc;15 g
+Feijão;75 g;0.5 xíc;15 g
+Lentilhas;75 g;0.5 xíc;15 g
+Feijão descascado (cozido);75 g;0.333 xíc;15 g
+Ervilhas (cozidas);100 g;0.5 xíc;15 g
+Batata-doce (assada);;0.5 un médias;15 g
+Milho (cozido);;0.5 xíc;15 g
+Milho (inteiro);140 g;0.5 un grandes;15 g
+Castanhas;;4 un grandes;15 g
+Batatas;85 g;1 un pequenas;15 g
+Batata (cozida);70 g;0.5 xíc;15 g
+Purê de batata com leite 1.5%;87 g;0.5 xíc;15 g
+Vagens (com sementes, cozidas);187 g;1.5 xíc;15 g
+Leite desnatado;240 ml;1 xíc;12 g
+Leite 1% ou 1.5% gordura ou leitelho 1.5%;240 ml;1 xíc;12 g
+Leite em pó desnatado;80 ml;0.333 xíc;12 g
+Leite evaporado (sem gordura);120 ml;0.5 xíc;12 g
+Leite de soja (sem açúcar);240 ml;1 xíc;12 g
+Iogurte;180 g;1 xíc;12 g
+Leite 2% gordura;240 ml;1 xíc;12 g
+Iogurte de leite 2% gordura;180 g;1 xíc;12 g
+Leite integral;240 ml;1 xíc;12 g
+Leite evaporado (enlatado);120 ml;1/2 xíc;12 g
+Leite de cabra;240 ml;1 xíc;12 g
+Kefir;240 ml;1 xíc;12 g

@@ -40,3 +40,19 @@ pip install -r requirements.txt
 
 - Main app repo: [mininio-carb-insulin-calc](../mininio-carb-insulin-calc)
 - Full AI integration plan: [AI_INTEGRATION_PLAN.md](AI_INTEGRATION_PLAN.md)
+
+## CSV Format
+
+Food database CSVs in `data/food_db/` are **semicolon-delimited** (not commas):
+
+```
+foodName;quantity_grams_ml;quantity_count;carbohydrates
+Apple;100;;14.0
+Bread (white);;1;15.0
+```
+
+- `quantity_grams_ml` — standard portion in g/ml (nullable)
+- `quantity_count` — standard portion in pieces/cups (nullable)
+- `carbohydrates` — grams of carbs per standard portion
+- At least one of `quantity_grams_ml` or `quantity_count` must be non-empty
+- Fields containing semicolons are double-quote escaped

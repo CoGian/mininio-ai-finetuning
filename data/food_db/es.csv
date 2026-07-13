@@ -1,1 +1,107 @@
-
+Food;Quantity(g/ml);Quantity(item);Carbohydrates(g)
+Gofre (diámetro 10x10);;1 pzas;15 g
+Avena Quaker (hojuelas-pan);20 g;2 cda;15 g
+Cereal Special K Kellog's;20 g;0.333 taza;15 g
+Bagel de Tesalónica;;0.5 pzas;15 g
+Galletas saladas redondas pequeñas;;5 pzas;15 g
+Crepa (diámetro 20cm);;0.5 pzas;15 g
+Palitos de pan (largo 20cm, diám 1.2cm);;2 pzas;15 g
+Palitos de pan (largo 10cm, diám 1.2cm);;4 pzas;15 g
+Palitos de pan (largo 10cm, diám 0.6cm);;6 pzas;15 g
+Crutones;;1 taza;15 g
+Muffin;;0.5 pzas;15 g
+Galletas cream cracker;;2 pzas;15 g
+Galletas petit beurre;;2 pzas;15 g
+Tostadas Krispis;;2 pzas;15 g
+Tarta (diámetro 15cm);;0.5 pzas;15 g
+Totopos de maíz Doritos;25 g;;15 g
+Tostadas pequeñas;;2 pzas;15 g
+Tostada Melba (alargada);;5 pzas;15 g
+Pan rallado;;3 cda;15 g
+Pan blanco (todos tipos);30 g;1 rebanada;15 g
+Pan integral de centeno o avena;30 g;1 rebanada;15 g
+Pan de molde;;1 rebanada;15 g
+Panes de hamburguesa;30 g;0.5 pzas;15 g
+Pan de perrito;30 g;0.5 pzas;15 g
+Harina;20 g;2.5 cda;15 g
+Cuscús (cocido);60 g;0.333 taza;15 g
+Corn Flakes;;0.5 taza;15 g
+Pasta-orzo-fideos (cocidos);60 g;0.333 taza;15 g
+Salvado de trigo (hervido);;3 cda;15 g
+Palomitas (microondas);;3 taza;15 g
+Arroz (cocido) blanco o integral;60 g;0.333 taza;15 g
+Kiwi;100 g;;15 g
+Piña (fresca);100 g;;15 g
+Pera;110 g;;15 g
+Albaricoques;150 g;;15 g
+Pomelo;330 g;;15 g
+Ciruelas (frescas);140 g;;15 g
+Sandía;200 g;;15 g
+Cerezas;85 g;;15 g
+Mango;160 g;;15 g
+Mandarina;220 g;;15 g
+Manzana;120 g;;15 g
+Plátano;120 g;;15 g
+Nectarina;140 g;;15 g
+Melón;280 g;;15 g
+Naranja;118 g;;15 g
+Melocotón;110 g;;15 g
+Pasas;17 g;;15 g
+Uvas;85 g;;15 g
+Fresas;170 g;;15 g
+Pepino;230 g;2 taza;5 g
+Alcachofa (hervida);55 g;0.33 taza;5 g
+Zanahorias (hervidas);90 g;1.5 taza;5 g
+Zanahorias (crudas);52 g;0.5 taza;5 g
+Calabacín (hervido);180 g;1 taza;5 g
+Cebollas (secas);55 g;0.333 taza;5 g
+Cebolletas;75 g;0.75 taza;5 g
+Coliflor (hervida);120 g;1 taza;5 g
+Coliflor (cruda);100 g;1 taza;5 g
+Col blanca (cruda);86 g;1.33 taza;5 g
+Col blanca (hervida);90 g;0.5 taza;5 g
+Lombarda (cruda);70 g;1 taza;5 g
+Coles de Bruselas;55 g;0.333 taza;5 g
+Tomate;125 g;1 pzas;5 g
+Champiñones (crudos);98 g;0.5 taza;5 g
+Champiñones (hervidos);95 g;0.5 taza;5 g
+Lechuga (cruda);135 g;1 taza;5 g
+Lechuga iceberg (cruda);168 g;3 taza;5 g
+Berenjena (asada);57 g;0.5 taza;5 g
+Brócoli (hervido);80 g;0.5 taza;5 g
+Okra (hervida);70 g;0.5 taza;5 g
+Remolacha (hervida);50 g;1 pzas;5 g
+Pimiento verde (crudo);110 g;1 pzas;5 g
+Pimiento rojo (crudo);82 g;0.5 taza;5 g
+Puerro (hervido);65 g;0.5 taza;5 g
+Rábanos (crudos);;1 taza;5 g
+Apio (hervido);125 g;0.75 taza;5 g
+Espinacas (hervidas);135 g;0.75 taza;5 g
+Espárragos (hervidos);120 g;8 pzas;5 g
+Verduras de hoja (hervidas, todo tipo);105 g;3/4 taza;5 g
+Guisantes amarillos partidos;75 g;0.5 taza;15 g
+Garbanzos;75 g;0.5 taza;15 g
+Alubias;75 g;0.5 taza;15 g
+Lentejas;75 g;0.5 taza;15 g
+Alubias peladas (cocidas);75 g;0.333 taza;15 g
+Guisantes (cocidos);100 g;0.5 taza;15 g
+Batata (horneada);;0.5 pzas medianas;15 g
+Maíz (hervido);;0.5 taza;15 g
+Maíz (entero);140 g;0.5 pzas grandes;15 g
+Castañas;;4 pzas grandes;15 g
+Patatas;85 g;1 pzas pequeñas;15 g
+Patata (hervida);70 g;0.5 taza;15 g
+Puré de patatas con leche al 1.5%;87 g;0.5 taza;15 g
+Judías verdes (con semillas, cocidas);187 g;1.5 taza;15 g
+Leche desnatada;240 ml;1 taza;12 g
+Leche al 1% o 1.5% de grasa o suero de leche 1.5%;240 ml;1 taza;12 g
+Leche desnatada en polvo;80 ml;0.333 taza;12 g
+Leche evaporada (sin grasa);120 ml;0.5 taza;12 g
+Leche de soja (sin azúcar);240 ml;1 taza;12 g
+Yogur;180 g;1 taza;12 g
+Leche al 2% de grasa;240 ml;1 taza;12 g
+Yogur de leche al 2% de grasa;180 g;1 taza;12 g
+Leche entera;240 ml;1 taza;12 g
+Leche evaporada (enlatada);120 ml;1/2 taza;12 g
+Leche de cabra;240 ml;1 taza;12 g
+Kéfir;240 ml;1 taza;12 g

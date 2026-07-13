@@ -1,1 +1,107 @@
-
+Food;Quantity(g/ml);Quantity(item);Carbohydrates(g)
+Waffle (diameter 10x10);;1 pcs;15 g
+Quaker Oats (flakes-bread);20 g;2 tbsp;15 g
+Special K Kellog's cereal;20 g;0.333 cup;15 g
+Thessaloniki bagel;;0.5 pcs;15 g
+Small round salted crackers;;5 pcs;15 g
+Crepe (diameter 20cm);;0.5 pcs;15 g
+Breadsticks (length 20cm, diam 1.2cm);;2 pcs;15 g
+Breadsticks (length 10cm, diam 1.2cm);;4 pcs;15 g
+Breadsticks (length 10cm, diam 0.6cm);;6 pcs;15 g
+Croutons;;1 cup;15 g
+Muffin;;0.5 pcs;15 g
+Cream cracker biscuits;;2 pcs;15 g
+Petit beurre biscuits;;2 pcs;15 g
+Krispis rusks;;2 pcs;15 g
+Pie (diameter 15cm);;0.5 pcs;15 g
+Doritas corn chips;25 g;;15 g
+Small rusks;;2 pcs;15 g
+Melba toast (elongated);;5 pcs;15 g
+Breadcrumbs;;3 tbsp;15 g
+White bread (all types);30 g;1 slice;15 g
+Whole rye or oat bread;30 g;1 slice;15 g
+Toast bread;;1 slice;15 g
+Hamburger buns;30 g;0.5 pcs;15 g
+Hot dog bun;30 g;0.5 pcs;15 g
+Flour;20 g;2.5 tbsp;15 g
+Couscous (cooked);60 g;0.333 cup;15 g
+Corn Flakes;;0.5 cup;15 g
+Pasta-orzo-noodles (cooked);60 g;0.333 cup;15 g
+Wheat bran (boiled);;3 tbsp;15 g
+Popcorn (microwave);;3 cup;15 g
+Rice (cooked) white or brown;60 g;0.333 cup;15 g
+Kiwi;100 g;;15 g
+Pineapple (fresh);100 g;;15 g
+Pear;110 g;;15 g
+Apricots;150 g;;15 g
+Grapefruit;330 g;;15 g
+Plums (fresh);140 g;;15 g
+Watermelon;200 g;;15 g
+Cherries;85 g;;15 g
+Mango;160 g;;15 g
+Tangerine;220 g;;15 g
+Apple;120 g;;15 g
+Banana;120 g;;15 g
+Nectarine;140 g;;15 g
+Melon;280 g;;15 g
+Orange;118 g;;15 g
+Peach;110 g;;15 g
+Raisins;17 g;;15 g
+Grapes;85 g;;15 g
+Strawberries;170 g;;15 g
+Cucumber;230 g;2 cup;5 g
+Artichoke (boiled);55 g;0.33 cup;5 g
+Carrots (boiled);90 g;1.5 cup;5 g
+Carrots (raw);52 g;0.5 cup;5 g
+Zucchini (boiled);180 g;1 cup;5 g
+Onions (dry);55 g;0.333 cup;5 g
+Green onions;75 g;0.75 cup;5 g
+Cauliflower (boiled);120 g;1 cup;5 g
+Cauliflower (raw);100 g;1 cup;5 g
+White cabbage (raw);86 g;1.33 cup;5 g
+White cabbage (boiled);90 g;0.5 cup;5 g
+Red cabbage (raw);70 g;1 cup;5 g
+Brussels sprouts;55 g;0.333 cup;5 g
+Tomato;125 g;1 pcs;5 g
+Mushrooms (raw);98 g;0.5 cup;5 g
+Mushrooms (boiled);95 g;0.5 cup;5 g
+Lettuce (raw);135 g;1 cup;5 g
+Iceberg lettuce (raw);168 g;3 cup;5 g
+Eggplant (roasted);57 g;0.5 cup;5 g
+Broccoli (boiled);80 g;0.5 cup;5 g
+Okra (boiled);70 g;0.5 cup;5 g
+Beets (boiled);50 g;1 pcs;5 g
+Green pepper (raw);110 g;1 pcs;5 g
+Red pepper (raw);82 g;0.5 cup;5 g
+Leeks (boiled);65 g;0.5 cup;5 g
+Radishes (raw);;1 cup;5 g
+Celery (boiled);125 g;0.75 cup;5 g
+Spinach (boiled);135 g;0.75 cup;5 g
+Asparagus (boiled);120 g;8 pcs;5 g
+Greens (boiled, all kinds);105 g;3/4 cup;5 g
+Yellow split peas;75 g;0.5 cup;15 g
+Chickpeas;75 g;0.5 cup;15 g
+Beans;75 g;0.5 cup;15 g
+Lentils;75 g;0.5 cup;15 g
+Peeled beans (cooked);75 g;0.333 cup;15 g
+Peas (cooked);100 g;0.5 cup;15 g
+Sweet potato (baked);;0.5 medium pcs;15 g
+Corn (boiled);;0.5 cup;15 g
+Corn (whole);140 g;0.5 large pcs;15 g
+Chestnuts;;4 large pcs;15 g
+Potatoes;85 g;1 small pcs;15 g
+Potato (boiled);70 g;0.5 cup;15 g
+Mashed potatoes with 1.5% milk;87 g;0.5 cup;15 g
+Green beans (with seeds, cooked);187 g;1.5 cup;15 g
+Skimmed milk;240 ml;1 cup;12 g
+Milk 1% or 1.5% fat or buttermilk 1.5%;240 ml;1 cup;12 g
+Powdered skimmed milk;80 ml;0.333 cup;12 g
+Evaporated milk (fat-free);120 ml;0.5 cup;12 g
+Soy milk (unsweetened);240 ml;1 cup;12 g
+Yogurt;180 g;1 cup;12 g
+Milk 2% fat;240 ml;1 cup;12 g
+Yogurt from 2% fat milk;180 g;1 cup;12 g
+Whole milk;240 ml;1 cup;12 g
+Evaporated milk (canned);120 ml;1/2 cup;12 g
+Goat milk;240 ml;1 cup;12 g
+Kefir;240 ml;1 cup;12 g
