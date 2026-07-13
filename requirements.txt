@@ -1,0 +1,10 @@
+google-genai
+transformers>=4.48.0
+unsloth
+peft
+torch>=2.4.0
+datasets
+accelerate
+bitsandbytes
+huggingface_hub
+litert-lm
