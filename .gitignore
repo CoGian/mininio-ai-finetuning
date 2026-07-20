@@ -9,3 +9,4 @@ checkpoints/
 models/
 .ipynb_checkpoints/
 .vscode/
+.antigravity/
