@@ -17,7 +17,8 @@ dependencies = [
     "pydantic==2.13.4",
     "python-dotenv==1.2.2",
     "loguru==0.7.3",
-    "langsmith==0.10.5",
+    "langfuse==4.14.1",
+    "openinference-instrumentation-google-genai==1.2.0",
 ]
 
 [dependency-groups]

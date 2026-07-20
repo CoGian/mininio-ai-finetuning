@@ -235,7 +235,11 @@ def _validate_length(conv: Conversation) -> list:
     full_text = " ".join(
         t.content or "" for t in conv.turns
     )
-    estimated_tokens = len(full_text) // 4
+    if conv.language in ("zh", "ja", "hi"):
+        estimated_tokens = len(full_text)
+    else:
+        estimated_tokens = len(full_text) // 4
+
     if estimated_tokens < 20:
         return [f"Too short: ~{estimated_tokens} tokens"]
     if estimated_tokens > 2560:

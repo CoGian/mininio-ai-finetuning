@@ -11,7 +11,8 @@ from typing import List, Optional
 from pydantic import BaseModel, ValidationError
 from google import genai
 from google.genai import types
-from langsmith import wrappers
+from langfuse import get_client, propagate_attributes
+from openinference.instrumentation.google_genai import GoogleGenAIInstrumentor
 
 from data.log_config import (
     logger, setup_logging, StepTimer, ProgressTracker,
@@ -99,16 +100,11 @@ def _get_client():
                 "GOOGLE_API_KEY not set. Create a key at https://aistudio.google.com/apikey "
                 "and add it to your .env file (see .env.example)."
             )
-        os.environ.setdefault("LANGSMITH_TRACING", "true")
-        warnings.filterwarnings("ignore", message=".*wrap_gemini is in beta.*")
-        raw = genai.Client()
-        _client = wrappers.wrap_gemini(
-            raw,
-            tracing_extra={
-                "tags": ["mininio", "data-generation"],
-                "metadata": {"project": "mininio-ai-finetuning"},
-            },
-        )
+        langfuse = get_client()
+        if not langfuse.auth_check():
+            logger.warning("Langfuse auth failed - traces will not be recorded. Check your keys.")
+        GoogleGenAIInstrumentor().instrument()
+        _client = genai.Client()
     return _client
 
 
@@ -444,11 +440,19 @@ async def generate_conversation(
 
                 await _rate_limiter.wait_if_needed()
 
-                response = _get_client().models.generate_content(
-                    model=GEMINI_MODEL,
-                    contents=prompt,
-                    config=types.GenerateContentConfig(**config_kwargs),
-                )
+                with propagate_attributes(
+                    tags=["mininio", "data-generation"],
+                    metadata={
+                        "project": "mininio-ai-finetuning",
+                        "language": lang,
+                        "scenario": scenario.value
+                    }
+                ):
+                    response = _get_client().models.generate_content(
+                        model=GEMINI_MODEL,
+                        contents=prompt,
+                        config=types.GenerateContentConfig(**config_kwargs),
+                    )
 
                 if global_tracker is not None and hasattr(response, 'usage_metadata'):
                     um = response.usage_metadata
@@ -714,6 +718,11 @@ async def main(languages, count_per_lang, dry_run, validate_only, max_concurrent
     logger.success(f"Avg rate: {global_tracker.rate_per_hour:.1f}/h")
     if global_tracker.total_cost > 0:
         logger.success(f"Est. cost: ${global_tracker.total_cost:.2f}")
+
+    try:
+        get_client().flush()
+    except Exception as e:
+        logger.warning(f"Failed to flush Langfuse: {e}")
 
 
 if __name__ == "__main__":
