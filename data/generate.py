@@ -518,15 +518,28 @@ def _hash_user_utterances(conv: Conversation) -> str:
     return hashlib.sha256(text.encode()).hexdigest()[:16]
 
 
-def _generate_work_distribution(count: int) -> list:
+import collections
+
+def _generate_work_distribution(count: int, existing_counts: dict = None) -> list:
+    if existing_counts is None:
+        existing_counts = {}
+        
     distribution = []
-    remaining = count
+    remaining_target = count
     scenarios = list(SCENARIO_WEIGHTS.keys())
+    
     for scenario in scenarios[:-1]:
-        n = round(count * SCENARIO_WEIGHTS[scenario])
-        distribution.append((scenario, n))
-        remaining -= n
-    distribution.append((scenarios[-1], remaining))
+        target = round(count * SCENARIO_WEIGHTS[scenario])
+        existing = existing_counts.get(scenario.value, 0)
+        n_to_generate = max(0, target - existing)
+        distribution.append((scenario, n_to_generate))
+        remaining_target -= target
+        
+    last_scenario = scenarios[-1]
+    existing_last = existing_counts.get(last_scenario.value, 0)
+    n_to_generate = max(0, remaining_target - existing_last)
+    distribution.append((last_scenario, n_to_generate))
+    
     return distribution
 
 
@@ -542,6 +555,7 @@ async def generate_language_dataset(
 
     completed = set()
     existing_count = 0
+    existing_counts_by_scenario = collections.defaultdict(int)
     if resume and output_path.exists():
         with open(output_path, encoding="utf-8") as f:
             for line in f:
@@ -550,9 +564,10 @@ async def generate_language_dataset(
                     continue
                 try:
                     conv_data = json.loads(line)
-                    key = (conv_data["scenario_type"],
-                           _hash_user_utterances_raw(conv_data))
+                    scenario_type = conv_data["scenario_type"]
+                    key = (scenario_type, _hash_user_utterances_raw(conv_data))
                     completed.add(key)
+                    existing_counts_by_scenario[scenario_type] += 1
                     existing_count += 1
                 except (json.JSONDecodeError, KeyError):
                     pass
@@ -562,7 +577,7 @@ async def generate_language_dataset(
     meta_tracker = ConversationMetaTracker()
     semaphore = asyncio.Semaphore(max_concurrent)
 
-    work_items = _generate_work_distribution(count)
+    work_items = _generate_work_distribution(count, existing_counts_by_scenario)
     generated = 0
     failed = 0
     skipped = 0
@@ -576,9 +591,9 @@ async def generate_language_dataset(
         tracker.bulk_resume(existing_count)
 
     for scenario, n in work_items:
-        logger.debug(f"[{lang}] Scenario {scenario.value}: {n} items")
+        logger.debug(f"[{lang}] Scenario {scenario.value}: {n} items to generate")
         for _ in range(n):
-            if generated >= count:
+            if generated + existing_count >= count:
                 break
 
             sampled_str, sampled_ids = get_all_food_names_and_ids(food_db, max_items=20)
