@@ -1,1 +1,191 @@
-
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "definitions": {
+    "FoodResult": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer" },
+        "name": { "type": "string" },
+        "carbs_per_100g": { "type": ["number", "null"] },
+        "carbs_per_piece": { "type": ["number", "null"] },
+        "has_grams_mode": { "type": "boolean" },
+        "has_pieces_mode": { "type": "boolean" }
+      },
+      "required": ["id", "name", "has_grams_mode", "has_pieces_mode"]
+    },
+    "TallyItem": {
+      "type": "object",
+      "properties": {
+        "food_id": { "type": "integer" },
+        "quantity": { "type": "number" },
+        "unit": { "type": "string", "enum": ["g", "ml", "pcs", "cup", "tbsp", "slice"] }
+      },
+      "required": ["food_id", "quantity", "unit"]
+    },
+    "TallyEntry": {
+      "type": "object",
+      "properties": {
+        "entry_id": { "type": "integer" },
+        "food_name": { "type": "string" },
+        "quantity": { "type": "number" },
+        "unit": { "type": "string" },
+        "carbs": { "type": "number" }
+      }
+    }
+  },
+  "tools": [
+    {
+      "name": "search_foods",
+      "description": "Search the nutrition database for multiple food names. Each query returns matching food items with their IDs, carbohydrate values per standard portion, and supported measurement modes (grams and/or pieces). The returned food IDs must be used in subsequent add_foods_to_tally calls — IDs from anywhere else will be rejected.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "queries": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Food names to search (e.g. [\"potatoes\", \"bread\", \"rice\"])"
+          }
+        },
+        "required": ["queries"]
+      },
+      "returns": {
+        "type": "array",
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/FoodResult" }
+        },
+        "description": "One result array per query in the same order. Empty array [] if a query matches nothing."
+      }
+    },
+    {
+      "name": "add_foods_to_tally",
+      "description": "Add food items to the calculation tally. Computes carbs per item as (quantity × food_carbs) / standard_quantity using the food's carbohydrate values from the search results. Every food_id must be in the KNOWN FOOD IDS set (populated by prior search_foods calls). Rejected food_ids return an error.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/TallyItem" },
+            "description": "Food items to add with their quantities and units"
+          }
+        },
+        "required": ["items"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/TallyEntry" }
+          },
+          "tally_total": { "type": "number" }
+        }
+      }
+    },
+    {
+      "name": "remove_foods_from_tally",
+      "description": "Remove entries from the tally by their entry IDs. Entry IDs come from the CURRENT TALLY context block or from add_foods_to_tally return values. Every entry_id must exist in the current tally — invalid IDs return an error.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "entry_ids": {
+            "type": "array",
+            "items": { "type": "integer" },
+            "description": "Entry IDs to remove (visible in CURRENT TALLY)"
+          }
+        },
+        "required": ["entry_ids"]
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "removed": { "type": "integer", "description": "Number of entries actually removed" },
+          "tally_total": { "type": "number", "description": "New tally total after removal" }
+        }
+      }
+    },
+    {
+      "name": "calculate_final",
+      "description": "Compute the final insulin dose. Requires at least one food in the tally (unless checking glucose-only, which will return an error). Absorbs meal time and blood glucose as optional parameters — no separate setter calls needed. Meal time defaults: morning 4:00-12:00 (divider 14), midday 12:00-17:00 (divider 15), evening 17:00-4:00 (divider 12). Glucose correction is max(0, (blood_glucose - baseline) / divisor) only if blood_glucose >= threshold.",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "meal_time": {
+            "type": "string",
+            "enum": ["morning", "midday", "evening"],
+            "description": "Meal time period. Omit to let the tool infer from time of day."
+          },
+          "meal_hour": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 23,
+            "description": "Specific hour mentioned by user. Null/omit if not specified."
+          },
+          "blood_glucose": {
+            "type": "number",
+            "description": "Blood glucose in mg/dL. Omit if not checking glucose."
+          }
+        },
+        "required": []
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "final_result": { "type": "number", "description": "Total insulin dose" },
+          "food_insulin": { "type": "number", "description": "Insulin for carbs only" },
+          "glucose_correction": { "type": "number", "description": "Correction insulin for high BG" },
+          "glucose_skipped": { "type": "boolean", "description": "True if BG was below threshold" },
+          "tally_total": { "type": "number" },
+          "meal_divider": { "type": "integer" },
+          "meal_time": { "type": "string" },
+          "meal_hour": { "type": ["integer", "null"] },
+          "blood_glucose": { "type": ["number", "null"] },
+          "threshold": { "type": "number" },
+          "baseline": { "type": "number" },
+          "divisor": { "type": "number" },
+          "breakdown_food": { "type": "string" },
+          "breakdown_glucose": { "type": "string" }
+        }
+      }
+    },
+    {
+      "name": "get_tally_summary",
+      "description": "Get current calculation state. Normally this information is already available in the CURRENT TALLY context block appended to every user message — use this only as a safety net if you've lost track of state after a complex correction sequence.",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "entries": {
+            "type": "array",
+            "items": { "$ref": "#/definitions/TallyEntry" }
+          },
+          "total_carbs": { "type": "number" },
+          "food_insulin": { "type": "number" },
+          "meal_time": { "type": ["string", "null"] },
+          "meal_hour": { "type": ["integer", "null"] },
+          "blood_glucose": { "type": ["number", "null"] },
+          "glucose_enabled": { "type": "boolean" }
+        }
+      }
+    },
+    {
+      "name": "clear_all",
+      "description": "Clear all calculation data including the tally entries and the known food IDs set. Use this to start completely fresh — typically invoked when the user wants to begin a new calculation or says something like \"start over\" or \"reset\".",
+      "parameters": {
+        "type": "object",
+        "properties": {},
+        "required": []
+      },
+      "returns": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean" }
+        }
+      }
+    }
+  ]
+}

@@ -104,7 +104,7 @@ Adds multiple food items to the tally at once. Each item's carbs are calculated 
 
 | Param | Type | Required | Description |
 |-------|------|----------|-------------|
-| items | array | Yes | List of `{food_id: int, quantity: float, unit: "g"\|"ml"\|"pcs"\|"cup"}` |
+| items | array | Yes | List of `{food_id: int, quantity: float, unit: "g"\|"ml"\|"pcs"\|"cup"\|"tbsp"\|"slice"}` |
 
 **Precondition**: Every `food_id` must be in the `KNOWN FOOD IDS` set (populated by prior `search_foods` calls). The harness rejects any unknown ID with an error.
 
@@ -345,9 +345,9 @@ Harness injects context → LLM receives:
             {id:25, name:"Bread (white)", carbs_per_piece:15.0}]
     → knownFoodIds updated to {12, 25}
 
-[2] LLM → add_foods_to_tally([{12, 100, "g"}, {25, 2, "pcs"}])
+[2] LLM → add_foods_to_tally([{12, 100, "g"}, {25, 2, "slice"}])
     → Harness validates: 12 and 25 are in knownFoodIds → OK
-    Tool → {entries: [{1,"Potatoes",100,"g",17.0}, {2,"Bread",2,"pcs",30.0}], tally_total:47.0}
+    Tool → {entries: [{1,"Potatoes",100,"g",17.0}, {2,"Bread",2,"slice",30.0}], tally_total:47.0}
 
 [3] LLM → calculate_final(meal_time="midday", blood_glucose=140)
     → Harness validates: tally not empty → OK
@@ -356,7 +356,7 @@ Harness injects context → LLM receives:
 
 [4] LLM → TEXT:
     "Potatoes: 100g → 17.0g carbs
-     Bread: 2 pcs → 30.0g carbs
+     Bread: 2 slice → 30.0g carbs
      Total: 47.0g | Midday (divider 15)
      Food insulin: 47.0/15 = 3.13 U
      BG correction: (140-100)/40 = 1.00 U
@@ -413,7 +413,7 @@ Harness injects:
 
 [1] LLM → search_foods(["potatoes", "bread"])
     → knownFoodIds = {12, 25}
-[2] LLM → add_foods_to_tally([{12, 100, "g"}, {25, 2, "pcs"}])
+[2] LLM → add_foods_to_tally([{12, 100, "g"}, {25, 2, "slice"}])
     Tool → tally_total: 47.0g, entries: [{1, "Potatoes", ...}, {2, "Bread", ...}]
 [3] LLM → calculate_final(meal_time="midday", blood_glucose=140)
     Tool → {final:4.13, ...}
@@ -428,7 +428,7 @@ Harness injects:
    
     [CURRENT TALLY: 2 items, 47.0g total]
       Potatoes (boiled) 100g = 17.0g (entry_id: 1)
-      Bread (white) 2pcs = 30.0g (entry_id: 2)
+      Bread (white) 2slice = 30.0g (entry_id: 2)
     [KNOWN FOOD IDS: Potatoes(12), Bread(25)]"
 
 [5] LLM → remove_foods_from_tally([2])     ← entry_id:2 visible in context
@@ -486,7 +486,7 @@ Harness injects:
 
 [4] LLM → search_foods(["bread"])
     → knownFoodIds = {12, 25}
-[5] LLM → add_foods_to_tally([{25, 2, "pcs"}])
+[5] LLM → add_foods_to_tally([{25, 2, "slice"}])
     Tool → tally_total: 47.0g
 [6] LLM → TEXT: "Bread added: 30.0g. Total now 47.0g. Ready to calculate?"
 ```

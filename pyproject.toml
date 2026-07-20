@@ -4,9 +4,9 @@ version = "0.1.0"
 description = "Fine-tuning pipeline for the Mininio Carb & Insulin Calc app's on-device AI assistant"
 requires-python = ">=3.11"
 dependencies = [
-    "google-genai==2.11.0",
+    "google-genai==2.12.1",
     "transformers==5.5.0",
-    "unsloth==2026.7.2",
+    "unsloth==2026.7.3",
     "peft==0.19.1",
     "torch==2.10.0",
     "datasets==4.3.0",
@@ -14,10 +14,14 @@ dependencies = [
     "bitsandbytes==0.49.2",
     "huggingface-hub==1.23.0",
     "litert-lm==0.14.0",
+    "pydantic==2.13.4",
+    "python-dotenv==1.2.2",
+    "loguru==0.7.3",
+    "langsmith==0.10.5",
 ]
 
 [dependency-groups]
-dev = []
+dev = ["pytest==9.1.1"]
 
 [tool.ruff]
 target-version = "py311"
