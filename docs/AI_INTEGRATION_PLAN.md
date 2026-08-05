@@ -224,19 +224,15 @@ When empty:
 
 ---
 
-### 2.9 System Prompt — Settings + Context Rules
+### 2.9 System Prompt — Static Prefix + Per-User Settings
 
-The user's current settings are injected into the system prompt. The `AgenticHarness` rebuilds it reactively whenever settings change.
+The system prompt has two parts: a **static prefix** (role definition, calculation rules, tool list) that is identical for all users and can be KV-cached, and a **dynamic tail** (user-specific glucose thresholds, meal dividers) injected from `SettingsRepository` at runtime.
 
+**Static prefix** (cached, never changes):
 ```
 You are a carb counting assistant for people with diabetes, integrated into the Mininio app.
 Help users calculate insulin doses by searching the nutrition database, adding foods to a
 tally, and computing glucose corrections.
-
-CURRENT USER SETTINGS:
-- Glucose: threshold=130.0 mg/dL, baseline=100.0 mg/dL, divisor=40.0 mg/dL per unit
-- Meal dividers: Morning=14, Midday=15, Evening=12
-- Meal time ranges: Morning (4:00-12:00), Midday (12:00-17:00), Evening (17:00-4:00)
 
 CALCULATION RULES:
 - Carbs per food = (quantity × food_carbs) / standard_quantity
@@ -251,9 +247,25 @@ call get_tally_summary to discover state unless you've lost track.
 Always use the provided functions. If a food name matches multiple results, ask the user to
 clarify. If quantity is missing, ask. Call calculate_final with meal_time and blood_glucose
 as parameters — no separate setter calls are needed.
+
+List of tools:
+1. search_foods(queries: string[]) — ...
+2. add_foods_to_tally(items: [...]) — ...
+3. remove_foods_from_tally(entry_ids: int[]) — ...
+4. calculate_final(meal_time?, meal_hour?, blood_glucose?) — ...
+5. get_tally_summary() — ...
+6. clear_all() — ...
 ```
 
-The harness replaces placeholder values with actuals from `SettingsRepository`.
+**Dynamic tail** (injected per-user at inference time from `SettingsRepository`):
+```
+CURRENT USER SETTINGS:
+- Glucose: threshold=130.0 mg/dL, baseline=100.0 mg/dL, divisor=40.0 mg/dL per unit
+- Meal dividers: Morning=14, Midday=15, Evening=12
+- Meal time ranges: Morning (4:00-12:00), Midday (12:00-17:00), Evening (17:00-4:00)
+```
+
+The `AgenticHarness` concatenates the static prefix with the per-user settings tail to build the full system prompt. The static prefix can be pre-cached by the inference engine; only the 3-line settings tail changes between users.
 
 ---
 

@@ -1,0 +1,186 @@
+import argparse
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
+
+from unsloth import FastLanguageModel
+import torch
+from loguru import logger
+from trl import SFTConfig, SFTTrainer
+
+from finetuning.common.config import TrainingConfig, detect_env
+from finetuning.common.data_loader import (
+    check_bos_prefix,
+    load_dataset_for_model,
+    prepare_dataset,
+    report_token_lengths,
+)
+from finetuning.common.masking import make_masking_fn
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="Fine-tune LFM2.5-1.2B-Instruct")
+    parser.add_argument("--data-dir", default=None)
+    parser.add_argument("--output-dir", default=None)
+    parser.add_argument("--env", default=None)
+    parser.add_argument("--epochs", type=int, default=3)
+    parser.add_argument("--max-seq-length", type=int, default=4096)
+    parser.add_argument("--batch-size", type=int, default=2)
+    parser.add_argument("--grad-accum", type=int, default=4)
+    parser.add_argument("--lr", type=float, default=2e-4)
+    parser.add_argument("--warmup-steps", type=int, default=100)
+    parser.add_argument("--save-steps", type=int, default=500)
+    parser.add_argument("--logging-steps", type=int, default=25)
+    parser.add_argument("--seed", type=int, default=3407)
+    parser.add_argument("--report-to", default=None)
+    args = parser.parse_args()
+
+    env = args.env or detect_env()
+
+    report_to = args.report_to
+    if report_to is None:
+        report_to = "wandb" if os.environ.get("WANDB_API_KEY") else "none"
+
+    logger.info(f"Report to: {report_to}")
+
+    config = TrainingConfig.for_env(
+        data_dir=args.data_dir,
+        output_dir=args.output_dir,
+        max_seq_length=args.max_seq_length,
+        per_device_batch_size=args.batch_size,
+        gradient_accumulation_steps=args.grad_accum,
+        learning_rate=args.lr,
+        num_train_epochs=args.epochs,
+        warmup_steps=args.warmup_steps,
+        save_steps=args.save_steps,
+        logging_steps=args.logging_steps,
+        seed=args.seed,
+    )
+
+    lfm_data_dir = os.path.join(config.data_dir, "lfm")
+    output_dir = os.path.join(config.output_dir, "lfm")
+    os.makedirs(output_dir, exist_ok=True)
+
+    logger.info(f"Environment: {env}")
+    logger.info(f"Data dir: {lfm_data_dir}")
+    logger.info(f"Output dir: {output_dir}")
+    logger.info(
+        f"Training config: bs={config.per_device_batch_size} "
+        f"ga={config.gradient_accumulation_steps} "
+        f"epochs={config.num_train_epochs} lr={config.learning_rate} "
+        f"max_seq={config.max_seq_length} seed={config.seed}",
+    )
+
+    model, tokenizer = FastLanguageModel.from_pretrained(
+        model_name="unsloth/LFM2.5-1.2B-Instruct",
+        max_seq_length=config.max_seq_length,
+        load_in_4bit=True,
+    )
+
+    model = FastLanguageModel.get_peft_model(
+        model,
+        r=config.lora_r,
+        lora_alpha=config.lora_alpha,
+        lora_dropout=config.lora_dropout,
+        target_modules=[
+            "q_proj",
+            "k_proj",
+            "v_proj",
+            "out_proj",
+            "in_proj",
+            "w1",
+            "w2",
+            "w3",
+        ],
+        bias="none",
+        use_gradient_checkpointing="unsloth",
+        random_state=config.seed,
+    )
+
+    logger.info("Loading dataset...")
+    dataset = load_dataset_for_model("lfm")
+    logger.info(
+        f"Train: {len(dataset['train'])} examples, "
+        f"Eval: {len(dataset['eval'])} examples",
+    )
+
+    logger.info("Checking BOS prefix...")
+    check_bos_prefix(dataset, tokenizer, "lfm")
+
+    logger.info("Reporting token lengths...")
+    report_token_lengths(dataset, tokenizer, "lfm", config.max_seq_length)
+
+    logger.info("Applying custom masking (assistant turns only)...")
+    masking_fn = make_masking_fn(tokenizer, "lfm", config.max_seq_length)
+    dataset = prepare_dataset(dataset, masking_fn)
+
+    logger.info("Setting up SFTTrainer...")
+    sft_config = SFTConfig(
+        output_dir=output_dir,
+        per_device_train_batch_size=config.per_device_batch_size,
+        gradient_accumulation_steps=config.gradient_accumulation_steps,
+        learning_rate=config.learning_rate,
+        num_train_epochs=config.num_train_epochs,
+        warmup_steps=config.warmup_steps,
+        optim="adamw_8bit",
+        lr_scheduler_type="linear",
+        weight_decay=0.01,
+        logging_steps=config.logging_steps,
+        save_steps=config.save_steps,
+        max_length=config.max_seq_length,
+        seed=config.seed,
+        report_to=report_to,
+        dataset_text_field="",
+        dataset_kwargs={"skip_prepare_dataset": True},
+        eval_strategy="steps",
+        eval_steps=config.save_steps,
+        save_total_limit=2,
+    )
+
+    trainer = SFTTrainer(
+        model=model,
+        tokenizer=tokenizer,
+        train_dataset=dataset["train"],
+        eval_dataset=dataset["eval"],
+        args=sft_config,
+    )
+
+    gpu_stats = torch.cuda.get_device_properties(0)
+    start_memory = round(torch.cuda.max_memory_reserved() / 1024**3, 3)
+    total_memory = round(gpu_stats.total_memory / 1024**3, 3)
+    logger.info(f"GPU: {gpu_stats.name} ({total_memory} GB)")
+    logger.info(f"Reserved before training: {start_memory} GB")
+
+    logger.info("Training...")
+    trainer_stats = trainer.train()
+
+    end_memory = round(torch.cuda.max_memory_reserved() / 1024**3, 3)
+    training_memory = round(end_memory - start_memory, 3)
+    peak_pct = round(end_memory / total_memory * 100, 1)
+
+    logger.info(
+        f"Training complete in "
+        f"{round(trainer_stats.metrics['train_runtime'], 1)}s "
+        f"({round(trainer_stats.metrics['train_runtime'] / 60, 1)} min)",
+    )
+    logger.info(
+        f"Peak memory: {end_memory} GB ({peak_pct}%), "
+        f"training overhead: {training_memory} GB",
+    )
+
+    lora_dir = os.path.join(output_dir, "lora_adapter")
+    logger.info(f"Saving LoRA adapter to {lora_dir}...")
+    model.save_pretrained(lora_dir)
+    tokenizer.save_pretrained(lora_dir)
+
+    merged_dir = os.path.join(output_dir, "merged_16bit")
+    logger.info(f"Saving merged 16-bit model to {merged_dir}...")
+    model.save_pretrained_merged(merged_dir, tokenizer, save_method="merged_16bit")
+
+    logger.info("Done!")
+
+
+if __name__ == "__main__":
+    main()

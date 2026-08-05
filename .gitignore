@@ -10,3 +10,6 @@ models/
 .ipynb_checkpoints/
 .vscode/
 .antigravity/
+wandb/
+unsloth_compiled_cache/
+finetuning/output/
