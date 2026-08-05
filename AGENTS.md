@@ -9,8 +9,8 @@ two candidate models (LFM2.5 + Gemma 4) via Unsloth + TRL SFTTrainer.
 ## Environment
 
 - Python 3.11+, virtualenv at `.venv/`
-- Copy `.env.example` to `.env` and set `GOOGLE_API_KEY`
-- Install: `uv pip install -r requirements.txt`
+- Copy `.env.example` to `.env` and set `GOOGLE_API_KEY` (required for data generation only)
+- Install: `uv sync`
 
 ## Code Conventions
 
@@ -37,6 +37,16 @@ two candidate models (LFM2.5 + Gemma 4) via Unsloth + TRL SFTTrainer.
 | `data/formatters/` | LFM ChatML + Gemma Unsloth format converters |
 | `data/assemble.py` | Stratified 90/10 split, per-conversation settings injection |
 | `data/stats.py` | Per-language/scenario distribution report |
+| `finetuning/common/config.py` | TrainingConfig dataclass, env detection (Colab/Kaggle/local) |
+| `finetuning/common/masking.py` | Custom loss masking — excludes tool results from loss |
+| `finetuning/common/data_loader.py` | HuggingFace Dataset loader, token stats, BOS duplication check |
+| `finetuning/lfm/train_lfm.py` | LFM2.5 training script (Unsloth + TRL SFTTrainer) |
+| `finetuning/gemma/train_gemma.py` | Gemma 4 training script (Unsloth + TRL SFTTrainer) |
+| `evaluation/criteria.py` | Weighted scoring: 6 metrics (40/25/15/10/5/5) |
+| `evaluation/evaluate.py` | Harness-replay evaluator with tool result injection |
+| `export/convert_lfm_gguf.py` | LFM → GGUF (q4_k_m/q5_k_m/q8_0/f16) |
+| `export/convert_gemma_litertlm.py` | Gemma → LiteRT-LM (int4/int8) |
+| `docs/TRAINING_PROCEDURE.md` | Training design rationale: format, loss, optimizer, hyperparams, post-training |
 
 ## Common Commands
 
@@ -76,13 +86,31 @@ python data/stats.py
 
 # Run tests
 pytest tests/ -v
+
+# Train LFM2.5 (local)
+python -m finetuning.lfm.train_lfm --data-dir data/output --output-dir finetuning/output
+
+# Train Gemma 4 (local)
+python -m finetuning.gemma.train_gemma --data-dir data/output --output-dir finetuning/output
+
+# Train with wandb monitoring (set WANDB_API_KEY in .env)
+python -m finetuning.lfm.train_lfm --report-to wandb
+
+# Evaluate fine-tuned model
+python evaluation/evaluate.py --checkpoint-dir finetuning/output/lfm/lora_adapter --model-type lfm --eval-path data/output/lfm/eval.jsonl
+
+# Export LFM → GGUF
+python export/convert_lfm_gguf.py --lora-dir finetuning/output/lfm/lora_adapter --output-dir export/lfm --quant q4_k_m
+
+# Export Gemma → LiteRT-LM
+python export/convert_gemma_litertlm.py --merged-dir finetuning/output/gemma/merged_16bit --output-dir export/gemma --quant int4
 ```
 
 ## Testing
 
-- `pytest tests/ -v` — 276 tests across 8 files
+- `pytest tests/ -v` — 295 tests across 9 files
 - Run from project root; fixtures use inline data (no file I/O except CSV load tests)
-- Tests cover: UnitNormalizer, MockHarness, all 8 validators, formatters, work distribution, hashing, Pydantic models, assemble logic
+- Tests cover: UnitNormalizer, MockHarness, all 8 validators, formatters, work distribution, hashing, Pydantic models, assemble logic, custom masking
 
 ## Architecture Rule
 

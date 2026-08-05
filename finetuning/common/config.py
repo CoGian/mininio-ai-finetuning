@@ -1,6 +1,6 @@
 import os
 from dataclasses import dataclass, field
-from typing import Optional
+from typing import Any, Optional
 
 
 def detect_env() -> str:
@@ -53,7 +53,7 @@ class TrainingConfig:
             else:
                 output_dir = "finetuning/output"
 
-        kwargs: dict = {
+        kwargs: dict[str, Any] = {
             "data_dir": data_dir,
             "output_dir": output_dir,
         }

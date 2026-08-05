@@ -12,25 +12,15 @@ Fine-tuning pipeline for the Mininio Carb & Insulin Calc app's on-device AI assi
 ## Setup
 
 ```bash
-# Create virtual environment
-uv venv
-
-# Install dependencies
-uv pip install -r requirements.txt
-
-# Activate (Windows)
-.venv\Scripts\activate
-# Activate (macOS/Linux)
-source .venv/bin/activate
+# Sync dependencies (creates .venv if needed)
+uv sync
 
 # Create .env file from template
 copy .env.example .env      # Windows
 cp .env.example .env         # macOS/Linux
 
-# Edit .env — add your GOOGLE_API_KEY
+# Edit .env — add your GOOGLE_API_KEY (required for data generation only)
 ```
-
-Get a Gemini API key at [aistudio.google.com/apikey](https://aistudio.google.com/apikey).
 
 ## Quick Test
 
@@ -110,31 +100,72 @@ data/output/
 
 ## Fine-Tuning
 
-Load formatted data via the shared loader:
+Both candidates use Unsloth for 4-bit QLoRA + TRL SFTTrainer with custom masking
+that excludes tool results from the loss (only assistant decisions are trained on).
+
+**Training scripts:**
+
+```bash
+# LFM2.5-1.2B-Instruct (~2-3h on RTX 4060 8GB, 4-6h on A100)
+python -m finetuning.lfm.train_lfm --data-dir data/output --output-dir finetuning/output
+
+# Gemma 4 E2B (~4-6h on RTX 4060 8GB, 6-8h on A100)
+python -m finetuning.gemma.train_gemma --data-dir data/output --output-dir finetuning/output
+
+# With wandb monitoring (set WANDB_API_KEY in .env first)
+python -m finetuning.lfm.train_lfm --report-to wandb
+
+# Customize hyperparameters
+python -m finetuning.lfm.train_lfm --epochs 3 --batch-size 2 --grad-accum 4 --lr 2e-4 --max-seq-length 4096
+```
+
+**Output:** `finetuning/output/{lfm,gemma}/` containing LoRA adapters + merged 16-bit weights.
+
+**Programmatic access:**
 
 ```python
 from finetuning.common.data_loader import load_dataset_for_model
+from finetuning.common.masking import make_masking_fn
+from finetuning.common.config import TrainingConfig, detect_env
 
-# Load LFM or Gemma formatted dataset
-dataset = load_dataset_for_model("lfm")   # or "gemma"
-# Returns DatasetDict with "train" and "eval" splits
+dataset = load_dataset_for_model("lfm", data_dir="data/output")
+env = detect_env()  # "colab" | "kaggle" | "local"
+config = TrainingConfig.for_env(data_dir="data/output", output_dir="finetuning/output")
 ```
 
 Reference scripts:
 - `lfm2_5_sft_with_unsloth.py` — LFM2.5 fine-tuning with LoRA + ChatML format
 - `gemma_4_finetuning_quide` — Gemma 4 fine-tuning with QLoRA + Unsloth chat template
 
+## Evaluation & Export
+
+```bash
+# Evaluate fine-tuned model on held-out 701 conversations
+python evaluation/evaluate.py \
+  --checkpoint-dir finetuning/output/lfm/lora_adapter \
+  --model-type lfm \
+  --eval-path data/output/lfm/eval.jsonl
+
+# Export LFM → GGUF for llama.cpp Android runtime
+python export/convert_lfm_gguf.py \
+  --lora-dir finetuning/output/lfm/lora_adapter \
+  --output-dir export/lfm --quant q4_k_m
+
+# Export Gemma → LiteRT-LM for Google Edge Android runtime
+python export/convert_gemma_litertlm.py \
+  --merged-dir finetuning/output/gemma/merged_16bit \
+  --output-dir export/gemma --quant int4
+```
+
 ## Environment Variables
 
 | Variable | Required | Default | Purpose |
 |----------|----------|---------|---------|
-| `GOOGLE_API_KEY` | Yes | — | Gemini API key for data generation |
+| `GOOGLE_API_KEY` | For generation | — | Gemini API key for data generation |
 | `GEMINI_MODEL` | No | `gemini-2.5-flash` | Gemini model to use |
-| `HF_TOKEN` | For training | — | HuggingFace token for model upload |
-| `WANDB_API_KEY` | No | — | Weights & Biases for training metrics |
+| `HF_TOKEN` | No | — | HuggingFace token (avoids anonymous rate limits; required for gated models) |
+| `WANDB_API_KEY` | No | — | Enables wandb logging (auto-detected, or use `--report-to wandb`) |
 | `WANDB_PROJECT` | No | `mininio-ai-finetuning` | WandB project name |
-| `LFM_MODEL_NAME` | No | `unsloth/LFM2.5-1.2B-Instruct` | LFM base model |
-| `GEMMA_MODEL_NAME` | No | `google/gemma-4-e2b-it` | Gemma base model |
 
 ## File Structure
 
@@ -161,7 +192,7 @@ Reference scripts:
 │   │   └── gemma_formatter.py  # Gemma Unsloth converter
 │   └── food_db/                # Food database CSVs (10 languages)
 │
-├── tests/                      # pytest unit tests (276 tests)
+├── tests/                      # pytest unit tests (295 tests)
 │   ├── conftest.py
 │   ├── test_food_db_loader.py
 │   ├── test_mock_harness.py
@@ -169,20 +200,33 @@ Reference scripts:
 │   ├── test_scenarios.py
 │   ├── test_generate.py
 │   ├── test_formatters.py
-│   └── test_assemble.py
+│   ├── test_assemble.py
+│   └── test_masking.py
 │
 ├── finetuning/                 # Model fine-tuning
 │   ├── common/
-│   │   └── data_loader.py      # HuggingFace Dataset loader
-│   ├── lfm/                    # LFM2.5 fine-tuning notebook
-│   └── gemma/                  # Gemma 4 fine-tuning notebook
+│   │   ├── config.py           # TrainingConfig, env detection (Colab/Kaggle/local)
+│   │   ├── data_loader.py      # HuggingFace Dataset loader + token stats + BOS check
+│   │   └── masking.py          # Custom loss masking (excludes tool results from loss)
+│   ├── lfm/
+│   │   ├── train_lfm.py        # LFM2.5 training script (Unsloth + TRL)
+│   │   └── train_lfm.ipynb     # Colab wrapper notebook
+│   └── gemma/
+│       ├── train_gemma.py      # Gemma 4 training script (Unsloth + TRL)
+│       └── train_gemma.ipynb   # Colab wrapper notebook
 │
 ├── evaluation/                 # Model evaluation & selection
-├── export/                     # GGUF & LiteRT-LM conversion
+│   ├── criteria.py             # Weighted scoring (6 metrics, 40/25/15/10/5/5)
+│   └── evaluate.py             # Harness-replay evaluator
+│
+├── export/                     # Model export for Android
+│   ├── convert_lfm_gguf.py     # LFM → GGUF (q4_k_m/q5_k_m/q8_0/f16)
+│   └── convert_gemma_litertlm.py  # Gemma → LiteRT-LM (int4/int8)
 │
 ├── docs/
 │   ├── AI_INTEGRATION_PLAN.md  # Android AI integration plan
-│   └── DATA_GENERATION_PLAN.md # Synthetic data pipeline plan
+│   ├── DATA_GENERATION_PLAN.md # Synthetic data pipeline plan
+│   └── TRAINING_PROCEDURE.md   # Training design: format, loss, optimizer, hyperparams, post-training
 ├── lfm2_5_sft_with_unsloth.py  # LFM reference training script
 ├── gemma_4_finetuning_quide    # Gemma reference training guide
 ├── AGENTS.md                   # Instructions for AI coding agents
@@ -204,4 +248,5 @@ Based on Gemini 2.5 Flash pricing ($0.15/1M input, $0.60/1M output).
 
 - [AI Integration Plan](docs/AI_INTEGRATION_PLAN.md) — Android app tool schemas, agentic loop, fine-tuning strategy
 - [Data Generation Plan](docs/DATA_GENERATION_PLAN.md) — Detailed synthesis pipeline design
+- [Training Procedure](docs/TRAINING_PROCEDURE.md) — Format choices, loss masking, optimizer, hyperparameter rationale, post-training
 - [AGENTS.md](AGENTS.md) — Instructions for AI coding agents working in this repo

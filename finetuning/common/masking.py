@@ -6,7 +6,7 @@ _ASSISTANT_LFM_RE = re.compile(
     r"<\|im_start\|>assistant\n(.*?(?:<\|tool_call_start\|>.*?<\|tool_call_end\|>)?.*?<\|im_end\|>)",
 )
 
-_TOOL_RESULT_GEMMA_RE = re.compile(r"^Tool results:", re.MULTILINE)
+_TOOL_RESULT_GEMMA_RE = re.compile(r"^Tool results:")
 
 _MODEL_GEMMA_RE = re.compile(r"<\|turn>model\n(.*?<turn\|>)")
 

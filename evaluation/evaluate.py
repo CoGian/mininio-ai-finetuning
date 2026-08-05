@@ -96,10 +96,11 @@ def _parse_lfm_args(raw: str) -> dict:
             else:
                 items = re.findall(r'"([^"]*)"', inner)
                 args[key] = items
-        elif val.replace(".", "").replace("-", "").isdigit():
-            args[key] = float(val) if "." in val else int(val)
         else:
-            args[key] = val.strip('"')
+            try:
+                args[key] = float(val) if "." in val else int(val)
+            except ValueError:
+                args[key] = val.strip('"')
     return args
 
 
@@ -162,15 +163,20 @@ def evaluate_model(
             turns = parse_turns(text)
 
             gold_tool_calls: list[dict] = []
+            gold_tool_result_turns: list[dict] = []
             gold_final_text = ""
             is_clarification = False
             for turn in turns:
-                if turn["role"] == "assistant":
+                if turn["role"] == "tool":
+                    gold_tool_result_turns.append(turn)
+                elif turn["role"] == "assistant":
                     tc = parse_tc(turn["content"])
                     if tc:
                         gold_tool_calls.append(tc)
                     elif _is_clarification(turn["content"]):
                         is_clarification = True
+                    elif turn["content"].startswith("Tool results:"):
+                        gold_tool_result_turns.append(turn)
                     else:
                         gold_final_text = turn["content"]
 
@@ -214,20 +220,9 @@ def evaluate_model(
                 tc = parse_tc(new_text)
                 if tc:
                     model_tool_calls.append(tc)
-                    for old_turn in turns:
-                        if old_turn["role"] == "tool":
-                            prev_role = None
-                            matched = False
-                            for pt in turns:
-                                if pt["role"] == "assistant" and pt is not None:
-                                    prev_role = "assistant"
-                                elif pt["role"] == "tool" and prev_role == "assistant":
-                                    conversation += _format_turn(pt, model_type)
-                                    prev_role = "tool"
-                                    matched = True
-                                    break
-                            if matched:
-                                break
+                    idx = len(model_tool_calls) - 1
+                    if idx < len(gold_tool_result_turns):
+                        conversation += _format_turn(gold_tool_result_turns[idx], model_type)
                     continue
                 elif _is_clarification(new_text):
                     model_final_text = new_text
@@ -260,10 +255,13 @@ def evaluate_model(
 
     torch.cuda.empty_cache()
 
+    if total_clarify == 0:
+        logger.warning("No clarification scenarios in eval set — clarification_quality defaults to 0.0")
+
     metrics = EvalMetrics(
         tool_call_accuracy=correct_tool_calls / total_tool_calls if total_tool_calls else 0.0,
         sequence_correctness=correct_final / total_final if total_final else 0.0,
-        clarification_quality=correct_clarify / total_clarify if total_clarify else 1.0,
+        clarification_quality=correct_clarify / total_clarify if total_clarify else 0.0,
         natural_language_quality=3.5,
         latency_score=1.0,
         memory_score=1.0,

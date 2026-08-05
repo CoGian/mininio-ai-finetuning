@@ -100,7 +100,7 @@ def main() -> None:
     )
 
     logger.info("Loading dataset...")
-    dataset = load_dataset_for_model("lfm")
+    dataset = load_dataset_for_model("lfm", config.data_dir)
     logger.info(
         f"Train: {len(dataset['train'])} examples, "
         f"Eval: {len(dataset['eval'])} examples",
@@ -117,8 +117,12 @@ def main() -> None:
     dataset = prepare_dataset(dataset, masking_fn)
 
     logger.info("Setting up SFTTrainer...")
+    effective_bs = config.per_device_batch_size * config.gradient_accumulation_steps
+    lr_str = f"{config.learning_rate:.0e}".replace(".0e-0", "e").replace(".0e-", "e-")
+    run_name = f"lfm-lora-bs{effective_bs}-lr{lr_str}-ep{config.num_train_epochs}"
     sft_config = SFTConfig(
         output_dir=output_dir,
+        run_name=run_name,
         per_device_train_batch_size=config.per_device_batch_size,
         gradient_accumulation_steps=config.gradient_accumulation_steps,
         learning_rate=config.learning_rate,

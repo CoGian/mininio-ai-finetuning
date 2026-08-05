@@ -5,9 +5,9 @@ from datasets import Dataset, DatasetDict
 from loguru import logger
 
 
-def load_dataset_for_model(model_type: Literal["lfm", "gemma"]) -> DatasetDict:
-    train = Dataset.from_json(f"data/output/{model_type}/train.jsonl")
-    eval_ds = Dataset.from_json(f"data/output/{model_type}/eval.jsonl")
+def load_dataset_for_model(model_type: Literal["lfm", "gemma"], data_dir: str = "data/output") -> DatasetDict:
+    train = Dataset.from_json(f"{data_dir}/{model_type}/train.jsonl")
+    eval_ds = Dataset.from_json(f"{data_dir}/{model_type}/eval.jsonl")
     return DatasetDict({"train": train, "eval": eval_ds})
 
 
@@ -68,9 +68,16 @@ def check_bos_prefix(
         text: str = row["text"]
 
         if text.startswith(bos_text):
+            bos_id = tokenizer.bos_token_id
             tokenized_with = tokenizer(text, add_special_tokens=True, truncation=True, max_length=8)
             tokenized_without = tokenizer(text, add_special_tokens=False, truncation=True, max_length=8)
-            double_bos = len(tokenized_with["input_ids"]) > len(tokenized_without["input_ids"]) + 1
+            with_ids = tokenized_with["input_ids"]
+            double_bos = (
+                bos_id is not None
+                and len(with_ids) >= 2
+                and with_ids[0] == bos_id
+                and with_ids[1] == bos_id
+            )
             if double_bos:
                 logger.warning(
                     f"[{model_type}] {split_name}: double BOS detected — "
