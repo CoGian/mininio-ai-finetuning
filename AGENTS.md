@@ -28,12 +28,14 @@ two candidate models (LFM2.5 + Gemma 4) via Unsloth + TRL SFTTrainer.
 |------|---------|
 | `data/food_db_loader.py` | Loads 10 CSVs, UnitNormalizer, search/sample |
 | `data/scenarios.py` | Pydantic models, 9 scenario types, weights |
-| `data/mock_harness.py` | Deterministic tool executor (math is never from Gemini) |
+| `data/mock_harness.py` | Deterministic tool executor + 5 rotating user settings configs |
 | `data/generate.py` | Gemini-powered conversation generator (async) |
 | `data/validator.py` | 8 validation checks on every generated conversation |
 | `data/log_config.py` | Structured logging (loguru), StepTimer, ProgressTracker, ETA |
+| `data/migrate_add_settings.py` | Annotates raw conversations with per-conversation settings idx |
+| `data/validate_settings.py` | Cross-references assigned settings vs calculate_final results |
 | `data/formatters/` | LFM ChatML + Gemma Unsloth format converters |
-| `data/assemble.py` | Stratified 90/10 split, formats for both models |
+| `data/assemble.py` | Stratified 90/10 split, per-conversation settings injection |
 | `data/stats.py` | Per-language/scenario distribution report |
 
 ## Common Commands
@@ -63,6 +65,12 @@ python data/generate.py --validate-only
 # Assemble train/eval splits for both models
 python data/assemble.py
 
+# Annotate raw data with user settings index
+python data/migrate_add_settings.py
+
+# Validate settings assignments against tool results
+python data/validate_settings.py
+
 # Generate stats report
 python data/stats.py
 
@@ -72,7 +80,7 @@ pytest tests/ -v
 
 ## Testing
 
-- `pytest tests/ -v` — 189 tests across 8 files
+- `pytest tests/ -v` — 276 tests across 8 files
 - Run from project root; fixtures use inline data (no file I/O except CSV load tests)
 - Tests cover: UnitNormalizer, MockHarness, all 8 validators, formatters, work distribution, hashing, Pydantic models, assemble logic
 
@@ -80,6 +88,8 @@ pytest tests/ -v
 
 - Gemini generates **SEMANTIC content** only (user text, assistant decisions, tool call sequences)
 - Mock harness computes **ALL tool results** (math is deterministic, never from Gemini)
+- Generation cycles through 5 user settings configs (different glucose thresholds, meal dividers, etc.)
+- Each raw conversation stores its `user_settings_idx` — assembly injects the matching parameters into the system prompt
 - Same conversations flow through both formatters — only template tokens differ
 
 ## Dependencies

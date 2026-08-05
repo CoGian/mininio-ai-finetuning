@@ -322,6 +322,9 @@ class ConversationMetaTracker:
         idx = self._total % len(USER_SETTINGS_POOL)
         return USER_SETTINGS_POOL[idx]
 
+    def get_user_settings_idx(self) -> int:
+        return self._total % len(USER_SETTINGS_POOL)
+
     def format_user_settings_prompt(self) -> str:
         return format_user_settings(self.get_user_settings())
 
@@ -605,6 +608,7 @@ async def generate_language_dataset(
             augmented_sample = (food_stats + "\n\n" + sampled_str) if food_stats else sampled_str
             conv_meta = meta_tracker.get_stats_prompt()
             user_settings = meta_tracker.get_user_settings()
+            user_settings_idx = meta_tracker.get_user_settings_idx()
             user_settings_str = meta_tracker.format_user_settings_prompt()
 
             try:
@@ -624,6 +628,8 @@ async def generate_language_dataset(
 
             food_tracker.record(_extract_food_ids_from_conversation(conv))
             meta_tracker.record(len(conv.turns))
+
+            conv.user_settings_idx = user_settings_idx
 
             with open(output_path, "a", encoding="utf-8") as f:
                 f.write(conv.model_dump_json() + "\n")

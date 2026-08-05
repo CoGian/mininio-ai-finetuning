@@ -56,31 +56,45 @@ python data/generate.py --count-per-lang 800 --languages all --verbose --log-fil
 # Validate existing raw data (no API calls)
 python data/generate.py --validate-only
 
+# Migrate raw data (add settings index after structural changes)
+python data/migrate_add_settings.py
+
+# Validate settings assignments (cross-check against tool results)
+python data/validate_settings.py
+
 # View generation statistics
 python data/stats.py
 ```
 
 ## Data Pipeline
 
-The data synthesis pipeline has 6 components:
+The data synthesis pipeline has 8 components:
 
 | Component | File | Purpose |
 |-----------|------|---------|
 | Food DB Loader | `data/food_db_loader.py` | Parses 10 CSVs (106 foods each), unit normalization, search/sample |
-| Mock Harness | `data/mock_harness.py` | Deterministic tool executor — computes carbs, insulin, BG correction. Math is never from Gemini |
+| Mock Harness | `data/mock_harness.py` | Deterministic tool executor — computes carbs, insulin, BG correction. Math is never from Gemini. Also includes 5 rotating user settings configs |
 | Scenario Engine | `data/scenarios.py` | Pydantic models, 9 scenario types with weighted distribution |
 | Generator | `data/generate.py` | Async Gemini 2.5 Flash API calls with retries, dedup, and validation |
 | Validator | `data/validator.py` | 8 validation checks: tool sequence, food IDs, entry IDs, math, units, length, empty turns, context blocks |
+| Migration | `data/migrate_add_settings.py` | Annotates raw conversations with per-conversation user settings index |
+| Validation | `data/validate_settings.py` | Cross-references settings index against calculate_final tool results |
 | Formatters | `data/formatters/` | Converts model-agnostic conversations to LFM2.5 ChatML and Gemma 4 Unsloth chat templates |
 | Logging | `data/log_config.py` | Structured logging via loguru — step timers, per-language & global progress tracking with ETA, file logging
 
-**Architecture rule**: Gemini generates semantic content only (user text, assistant decisions, tool call sequences). The mock harness computes all tool results. The same 8,000 conversations flow through both formatters — only template tokens differ.
+**Architecture rule**: Gemini generates semantic content only (user text, assistant decisions, tool call sequences). The mock harness computes all tool results using one of 5 rotating user settings configurations (different glucose thresholds, meal dividers, etc.). Each raw conversation stores its settings index. During assembly, the correct per-conversation settings are injected into the system prompt — the model always sees parameters matching the tool results it's learning from.
 
 ### Full Generation
 
 ```bash
 # Generate 800 conversations per language x 10 languages (~$12)
 python data/generate.py --count-per-lang 800 --languages all --log-file
+
+# Migrate annotated data (if regenerating after structural changes)
+python data/migrate_add_settings.py
+
+# Validate settings consistency
+python data/validate_settings.py
 
 # Assemble train/eval splits for both models
 python data/assemble.py
@@ -132,6 +146,8 @@ Reference scripts:
 │   ├── mock_harness.py         # Deterministic tool executor
 │   ├── validator.py            # Multi-layer validation (8 checks)
 │   ├── assemble.py             # Stratified 90/10 split + formatting
+│   ├── migrate_add_settings.py  # Annotate raw data with settings index
+│   ├── validate_settings.py     # Cross-check settings vs tool results
 │   ├── stats.py                # Generation statistics report
 │   ├── log_config.py           # Structured logging (loguru), progress tracking, ETA
 │   ├── prompts/                # System prompt templates
@@ -145,7 +161,7 @@ Reference scripts:
 │   │   └── gemma_formatter.py  # Gemma Unsloth converter
 │   └── food_db/                # Food database CSVs (10 languages)
 │
-├── tests/                      # pytest unit tests (189 tests)
+├── tests/                      # pytest unit tests (276 tests)
 │   ├── conftest.py
 │   ├── test_food_db_loader.py
 │   ├── test_mock_harness.py

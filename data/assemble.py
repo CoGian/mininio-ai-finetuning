@@ -6,12 +6,14 @@ from collections import defaultdict
 from data.log_config import logger, StepTimer, setup_logging
 from data.scenarios import Conversation
 from data.formatters import format_lfm, format_gemma
+from data.mock_harness import USER_SETTINGS_POOL, format_user_settings_training
 
 SEED = 42
 TRAIN_RATIO = 0.9
+RAW_DIR = "data/output/raw"
 
 
-def assemble_dataset(raw_dir: str = "data/output/raw"):
+def assemble_dataset(raw_dir: str = RAW_DIR):
     logger.info("=== ASSEMBLING DATASETS ===")
 
     raw_path = Path(raw_dir)
@@ -37,8 +39,8 @@ def assemble_dataset(raw_dir: str = "data/output/raw"):
         logger.warning(f"Skipped {broken} invalid conversations")
     logger.info(f"Loaded {len(raw_conversations)} conversations from {len(files)} language files")
 
-    lfm_system = Path("data/prompts/system_lfm.txt").read_text(encoding="utf-8")
-    gemma_system = Path("data/prompts/system_gemma.txt").read_text(encoding="utf-8")
+    lfm_template = Path("data/prompts/system_lfm.txt").read_text(encoding="utf-8")
+    gemma_template = Path("data/prompts/system_gemma.txt").read_text(encoding="utf-8")
 
     with StepTimer("Stratified split"):
         random.seed(SEED)
@@ -64,17 +66,17 @@ def assemble_dataset(raw_dir: str = "data/output/raw"):
     logger.info(f"Stratified across {len(groups)} (language, scenario) groups")
 
     with StepTimer("Format LFM2.5 ChatML"):
-        _save_formatted(train_convs, eval_convs, lfm_system,
+        _save_formatted(train_convs, eval_convs, lfm_template,
                         "data/output/lfm", format_lfm)
 
     with StepTimer("Format Gemma 4 Unsloth"):
-        _save_formatted(train_convs, eval_convs, gemma_system,
+        _save_formatted(train_convs, eval_convs, gemma_template,
                         "data/output/gemma", format_gemma)
 
     logger.success("Assembly complete.")
 
 
-def _save_formatted(train, eval_ds, system_prompt, output_dir, formatter):
+def _save_formatted(train, eval_ds, prompt_template, output_dir, formatter):
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
 
@@ -82,7 +84,10 @@ def _save_formatted(train, eval_ds, system_prompt, output_dir, formatter):
         path = out / f"{split_name}.jsonl"
         with open(path, "w", encoding="utf-8") as f:
             for conv in convs:
-                text = formatter(conv, system_prompt)
+                idx = conv.user_settings_idx if conv.user_settings_idx is not None else 0
+                settings_text = format_user_settings_training(USER_SETTINGS_POOL[idx])
+                prompt = prompt_template.replace("%{user_settings}", settings_text)
+                text = formatter(conv, prompt)
                 f.write(json.dumps({"text": text}, ensure_ascii=False) + "\n")
         logger.info(f"  Saved {path} ({len(convs)} examples)")
 

@@ -73,6 +73,24 @@ def format_user_settings(settings: dict) -> str:
     )
 
 
+def format_user_settings_training(settings: dict) -> str:
+    td = settings["glucose_threshold"]
+    bl = settings["glucose_baseline"]
+    dv = settings["glucose_divisor"]
+    md = settings["meal_dividers"]
+    ms = settings["meal_ranges"]
+    return (
+        f"CURRENT USER SETTINGS:\n"
+        f"- Glucose: threshold={td:.1f} mg/dL, baseline={bl:.1f} mg/dL, "
+        f"divisor={dv:.1f} mg/dL per unit\n"
+        f"- Meal dividers: Morning={md['morning']}, Midday={md['midday']}, "
+        f"Evening={md['evening']}\n"
+        f"- Meal time ranges: Morning ({ms['morning'][0]}:00-{ms['morning'][1]}:00), "
+        f"Midday ({ms['midday'][0]}:00-{ms['midday'][1]}:00), "
+        f"Evening ({ms['evening'][0]}:00-{ms['evening'][1]}:00)"
+    )
+
+
 def _make_search_result(food: FoodItem) -> dict:
     result = {
         "id": food.id,

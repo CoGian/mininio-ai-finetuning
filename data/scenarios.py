@@ -33,6 +33,7 @@ class Conversation(BaseModel):
     scenario_type: str
     language: str
     turns: List[Turn]
+    user_settings_idx: Optional[int] = None
 
 
 SCENARIO_WEIGHTS = {
