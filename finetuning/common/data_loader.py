@@ -79,10 +79,9 @@ def check_bos_prefix(
                 and with_ids[1] == bos_id
             )
             if double_bos:
-                logger.warning(
-                    f"[{model_type}] {split_name}: double BOS detected — "
-                    f"text already starts with '{bos_text}' and tokenizer adds another. "
-                    f"Use add_special_tokens=False when tokenizing.",
+                logger.info(
+                    f"[{model_type}] {split_name}: BOS prefix OK — text includes BOS, "
+                    f"tokenizer adds another (expected). Training uses add_special_tokens=False.",
                 )
             else:
                 logger.info(
