@@ -130,7 +130,7 @@ def main() -> None:
         weight_decay=0.001,
         logging_steps=config.logging_steps,
         save_steps=config.save_steps,
-        max_length=config.max_seq_length,
+        max_length=None,
         seed=config.seed,
         report_to=report_to,
         dataset_text_field="",
