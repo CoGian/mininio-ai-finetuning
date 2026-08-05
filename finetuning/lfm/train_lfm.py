@@ -34,6 +34,7 @@ def main() -> None:
     parser.add_argument("--save-steps", type=int, default=500)
     parser.add_argument("--logging-steps", type=int, default=25)
     parser.add_argument("--seed", type=int, default=3407)
+    parser.add_argument("--fp16", action="store_true")
     parser.add_argument("--report-to", default=None)
     args = parser.parse_args()
 
@@ -101,9 +102,20 @@ def main() -> None:
 
     logger.info("Loading dataset...")
     dataset = load_dataset_for_model("lfm", config.data_dir)
+    train_size = len(dataset["train"])
     logger.info(
-        f"Train: {len(dataset['train'])} examples, "
+        f"Train: {train_size} examples, "
         f"Eval: {len(dataset['eval'])} examples",
+    )
+
+    effective_bs = config.per_device_batch_size * config.gradient_accumulation_steps
+    steps_per_epoch = (train_size + effective_bs - 1) // effective_bs
+    total_steps = steps_per_epoch * config.num_train_epochs
+    dynamic_save = max(50, total_steps // 3)
+    config.save_steps = dynamic_save
+    logger.info(
+        f"Steps per epoch: {steps_per_epoch}, total: {total_steps}, "
+        f"save/checkpoint every {dynamic_save} steps",
     )
 
     logger.info("Checking BOS prefix...")
@@ -117,7 +129,6 @@ def main() -> None:
     dataset = prepare_dataset(dataset, masking_fn)
 
     logger.info("Setting up SFTTrainer...")
-    effective_bs = config.per_device_batch_size * config.gradient_accumulation_steps
     lr_str = f"{config.learning_rate:.0e}".replace(".0e-0", "e").replace(".0e-", "e-")
     run_name = f"lfm-lora-bs{effective_bs}-lr{lr_str}-ep{config.num_train_epochs}"
     sft_config = SFTConfig(
@@ -136,6 +147,7 @@ def main() -> None:
         max_length=None,
         seed=config.seed,
         report_to=report_to,
+        fp16=args.fp16,
         dataset_text_field="",
         dataset_kwargs={"skip_prepare_dataset": True},
         eval_strategy="steps",
