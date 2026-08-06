@@ -24,21 +24,28 @@ cat ~/.ssh/id_ed25519.pub   # paste into Vast.ai account
 
 | Minimum | Recommended |
 |---------|-------------|
-| V100 16 GB | A100 40 GB |
+| 16 GB VRAM | 24 GB VRAM |
 | 24 GB RAM | 48 GB RAM |
 | 32 GB disk | 64 GB disk |
+
+### GPU comparison (full run: both models, 3 epochs each)
+
+| GPU | VRAM | Speed | $/hr | Total cost | Total time | Best for |
+|-----|------|-------|------|------------|------------|----------|
+| **V100** | 16 GB | 1× | ~$0.12 | **~$0.40** | ~3.5 hrs | Cheapest |
+| **RTX 3090** | 24 GB | 2× | ~$0.20 | **~$0.35** | ~1.8 hrs | **Best value** |
+| **RTX 4090** | 24 GB | 3–4× | ~$0.35 | ~$0.40 | ~1.0 hr | Fastest at same cost |
+| A100 40GB | 40 GB | 4–5× | ~$0.80 | ~$1.50 | ~0.7 hr | Overkill for 1–2B |
+| T4 | 15 GB | 0.3× | free | free | ~10 hrs | Colab, very slow |
+
+> **RTX 3090** is the sweet spot — cheaper total cost than V100 while finishing
+> 2× faster, and 24 GB VRAM gives headroom for larger batches.
+> **V100** is fine if you want the lowest hourly rate.
 
 > [!WARNING]
 > **Do NOT rent a machine labelled "CUDA 13.0".** CUDA 13 dropped support for
 > compute capability 7.0 (V100) and will cause `torch` to fail with a
 > capability mismatch warning. Stick to instances with CUDA 12.x.
-
-V100 is the sweet spot: cheap (~$0.12/hr), 16 GB VRAM fits both models with
-QLoRA 4-bit, and fp16 tensor cores give ~2× training speed vs T4.
-
-Cost estimate for a full run (both models, 3 epochs each):
-- V100: **~$0.40** (~3.5 hrs total)
-- A100: **~$1.50** (~2 hrs total, faster)
 
 ---
 
