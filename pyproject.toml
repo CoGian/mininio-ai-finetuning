@@ -34,7 +34,7 @@ ignore = ["UP045"]
 
 [tool.uv.sources]
 torch = { index = "pytorch-cu130" }
-torchvision = { index = "pytorch-cu130" }
+torchvision = { version = "==0.25.0+cu130", index = "pytorch-cu130" }
 triton-windows = { index = "pytorch-cu130" }
 torchao = { index = "pytorch-cu130" }
 xformers = { index = "pytorch-cu130" }
