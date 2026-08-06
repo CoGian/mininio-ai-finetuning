@@ -33,13 +33,13 @@ target-version = "py311"
 ignore = ["UP045"]
 
 [tool.uv.sources]
-torch = { index = "pytorch-cu130" }
-torchvision = { version = "==0.25.0+cu130", index = "pytorch-cu130" }
-triton-windows = { index = "pytorch-cu130" }
-torchao = { index = "pytorch-cu130" }
-xformers = { index = "pytorch-cu130" }
+torch = { index = "pytorch-cu128" }
+torchvision = { version = "==0.25.0+cu128", index = "pytorch-cu128" }
+triton-windows = { index = "pytorch-cu128" }
+torchao = { index = "pytorch-cu128" }
+xformers = { index = "pytorch-cu128" }
 
 [[tool.uv.index]]
-name = "pytorch-cu130"
-url = "https://download.pytorch.org/whl/cu130"
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
 explicit = true
