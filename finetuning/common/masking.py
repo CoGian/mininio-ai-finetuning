@@ -66,7 +66,7 @@ def compute_masked_labels(
     max_length: int = 4096,
 ) -> tuple[list[int], list[int]]:
     encoding = tokenizer(
-        text,
+        text=text,
         add_special_tokens=False,
         truncation=True,
         max_length=max_length,

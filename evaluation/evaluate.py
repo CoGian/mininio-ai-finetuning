@@ -193,7 +193,7 @@ def evaluate_model(
             model_final_text = ""
             for _ in range(max_turns):
                 inputs = tokenizer(
-                    conversation,
+                    text=conversation,
                     return_tensors="pt",
                     return_dict=True,
                     add_special_tokens=False,
