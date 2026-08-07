@@ -108,7 +108,7 @@ def main() -> None:
     dtype = torch.float32 if device == "cpu" else torch.float16
     logger.info(f"Loading model from {args.model_dir} ({device}, {dtype})")
 
-    tokenizer = AutoTokenizer.from_pretrained(args.model_dir)
+    tokenizer = AutoTokenizer.from_pretrained(args.model_dir, local_files_only=True)
     if args.model_type == "gemma":
         try:
             from unsloth.chat_templates import get_chat_template
@@ -123,6 +123,7 @@ def main() -> None:
         args.model_dir,
         torch_dtype=dtype,
         device_map=device,
+        local_files_only=True,
     )
     model.eval()
     logger.info("Model loaded.")
