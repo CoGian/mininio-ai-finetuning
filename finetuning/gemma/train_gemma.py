@@ -150,6 +150,7 @@ def main() -> None:
         dataset_kwargs={"skip_prepare_dataset": True},
         eval_strategy="steps",
         eval_steps=config.save_steps,
+        eval_accumulation_steps=4,
         save_total_limit=2,
     )
 
