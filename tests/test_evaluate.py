@@ -137,6 +137,25 @@ class TestParseToolCallLfm:
         assert result is not None
         assert result["name"] == "clear_all"
 
+    def test_remove_foods_from_tally_int_list(self) -> None:
+        content = "<|tool_call_start|>remove_foods_from_tally(entry_ids=[1])<|tool_call_end|>"
+        result = parse_tool_call_lfm(content)
+        assert result is not None
+        assert result["name"] == "remove_foods_from_tally"
+        assert result["arguments"] == {"entry_ids": [1]}
+
+    def test_remove_foods_from_tally_multi_ids(self) -> None:
+        content = "<|tool_call_start|>remove_foods_from_tally(entry_ids=[1, 3, 5])<|tool_call_end|>"
+        result = parse_tool_call_lfm(content)
+        assert result is not None
+        assert result["arguments"] == {"entry_ids": [1, 3, 5]}
+
+    def test_string_list_still_works(self) -> None:
+        content = '<|tool_call_start|>search_foods(queries=["Apple", "Banana"])<|tool_call_end|>'
+        result = parse_tool_call_lfm(content)
+        assert result is not None
+        assert result["arguments"] == {"queries": ["Apple", "Banana"]}
+
 
 class TestParseToolCallGemma:
     def test_search_foods_json_args(self) -> None:

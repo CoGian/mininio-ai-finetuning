@@ -82,7 +82,7 @@ def _parse_lfm_args(raw: str) -> dict:
     args: dict[str, Any] = {}
     if not raw:
         return args
-    parts = re.split(r',\s*(?=(?:[^"]*"[^"]*")*[^"]*$)(?![^{]*\})', raw)
+    parts = re.split(r',\s*(?=(?:[^"]*"[^"]*")*[^"]*$)(?![^{]*\})(?![^\[]*\])', raw)
     for part in parts:
         kv = part.split("=", 1)
         if len(kv) != 2:
@@ -91,15 +91,13 @@ def _parse_lfm_args(raw: str) -> dict:
         val = kv[1].strip()
         if val.startswith("[") and val.endswith("]"):
             inner = val[1:-1].strip()
-            if inner.startswith("{"):
-                try:
-                    items = json.loads(f"[{inner}]")
-                    args[key] = items
-                except json.JSONDecodeError:
-                    logger.trace(f"Skipping malformed arg list: {val[:100]}")
-            else:
-                items = re.findall(r'"([^"]*)"', inner)
+            try:
+                items = json.loads(f"[{inner}]")
                 args[key] = items
+            except json.JSONDecodeError:
+                items = re.findall(r'"([^"]*)"', inner)
+                if items:
+                    args[key] = items
         else:
             try:
                 args[key] = float(val) if "." in val else int(val)
