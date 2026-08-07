@@ -7,6 +7,9 @@ from typing import Optional
 
 os.environ["HF_HUB_OFFLINE"] = "1"
 
+import huggingface_hub.utils._validators
+huggingface_hub.utils._validators.validate_repo_id = lambda name: name
+
 import torch
 from loguru import logger
 from transformers import AutoModelForCausalLM, AutoTokenizer
