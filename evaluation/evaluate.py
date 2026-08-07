@@ -9,6 +9,8 @@ from typing import Any, Optional
 import torch
 from loguru import logger
 
+os.environ["HF_HUB_OFFLINE"] = "1"
+
 from evaluation.criteria import FINAL_RESULT_TOLERANCE, EvalMetrics
 
 _LFM_TOOL_RE = re.compile(r"<\|tool_call_start\|>(.*?)<\|tool_call_end\|>", re.DOTALL)
