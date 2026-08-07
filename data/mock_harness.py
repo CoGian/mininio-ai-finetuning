@@ -189,13 +189,13 @@ class MockHarness:
                 "food_name": food.name,
                 "quantity": item["quantity"],
                 "unit": item["unit"],
-                "carbs": round(carbs, 1),
+                "carbs": round(carbs, 2),
             }
             self._next_entry_id += 1
             entries.append(entry)
             total += carbs
             self.tally_entries.append(entry)
-        return {"entries": entries, "tally_total": round(total, 1)}
+        return {"entries": entries, "tally_total": round(total, 2)}
 
     def _exec_remove_foods_from_tally(self, args: dict) -> dict:
         eids = set(args["entry_ids"])
@@ -208,7 +208,7 @@ class MockHarness:
                 new_tally.append(entry)
         self.tally_entries = new_tally
         total = sum(e["carbs"] for e in self.tally_entries)
-        return {"removed": removed, "tally_total": round(total, 1)}
+        return {"removed": removed, "tally_total": round(total, 2)}
 
     def _exec_calculate_final(self, args: dict) -> dict:
         if not self.tally_entries:
@@ -248,7 +248,7 @@ class MockHarness:
 
         final = food_insulin + glucose_correction
 
-        breakdown_food = f"{tally_total:.1f}g / {divider} = {food_insulin:.2f}U"
+        breakdown_food = f"{tally_total:.2f}g / {divider} = {food_insulin:.2f}U"
         breakdown_glucose = ""
         if blood_glucose is not None and not glucose_skipped:
             breakdown_glucose = f"({blood_glucose} - {baseline}) / {divisor} = {glucose_correction:.2f}U"
@@ -260,7 +260,7 @@ class MockHarness:
             "food_insulin": round(food_insulin, 2),
             "glucose_correction": round(glucose_correction, 2),
             "glucose_skipped": glucose_skipped,
-            "tally_total": round(tally_total, 1),
+            "tally_total": round(tally_total, 2),
             "meal_divider": divider,
             "meal_time": meal_time,
             "meal_hour": meal_hour or self.meal_hour,
