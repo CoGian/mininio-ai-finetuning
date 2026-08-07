@@ -175,7 +175,6 @@ class MockHarness:
     def _exec_add_foods_to_tally(self, args: dict) -> dict:
         items = args["items"]
         entries = []
-        total = 0.0
         for item in items:
             fid = item["food_id"]
             if fid not in self.known_food_ids:
@@ -193,8 +192,8 @@ class MockHarness:
             }
             self._next_entry_id += 1
             entries.append(entry)
-            total += carbs
-            self.tally_entries.append(entry)
+        total = sum(e["carbs"] for e in entries)
+        self.tally_entries.extend(entries)
         return {"entries": entries, "tally_total": round(total, 2)}
 
     def _exec_remove_foods_from_tally(self, args: dict) -> dict:

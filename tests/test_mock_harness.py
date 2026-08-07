@@ -47,6 +47,49 @@ class TestSerializeFood:
         assert result["piece_unit"] == "pcs"
 
 
+class TestTallyTotalRounding:
+    def _make_db(self) -> list[FoodItem]:
+        return [
+            FoodItem(
+                id=1, name="Potatoes", standard_quantity_g=85.0, standard_quantity_pcs=None,
+                carbs=15.0, carbs_per_100g=17.65, carbs_per_piece=None,
+                has_grams_mode=True, has_pieces_mode=False, is_liquid=False,
+                category="starchy_vegetables", gram_unit="g", piece_unit=None,
+            ),
+            FoodItem(
+                id=2, name="Grapes", standard_quantity_g=85.0, standard_quantity_pcs=None,
+                carbs=15.0, carbs_per_100g=17.65, carbs_per_piece=None,
+                has_grams_mode=True, has_pieces_mode=False, is_liquid=False,
+                category="fruits", gram_unit="g", piece_unit=None,
+            ),
+        ]
+
+    def test_tally_total_matches_sum_of_displayed_carbs(self) -> None:
+        h = MockHarness(self._make_db())
+        h._exec_search_foods({"queries": ["potato", "grape"]})
+        result = h._exec_add_foods_to_tally({
+            "items": [
+                {"food_id": 1, "quantity": 80, "unit": "g"},
+                {"food_id": 2, "quantity": 100, "unit": "g"},
+            ]
+        })
+        entry_sum = round(sum(e["carbs"] for e in result["entries"]), 2)
+        assert result["tally_total"] == entry_sum
+        assert result["tally_total"] == 31.77
+
+    def test_calculate_final_uses_same_total(self) -> None:
+        h = MockHarness(self._make_db())
+        h._exec_search_foods({"queries": ["potato", "grape"]})
+        h._exec_add_foods_to_tally({
+            "items": [
+                {"food_id": 1, "quantity": 80, "unit": "g"},
+                {"food_id": 2, "quantity": 100, "unit": "g"},
+            ]
+        })
+        result = h._exec_calculate_final({})
+        assert result["tally_total"] == 31.77
+
+
 class TestSearchFoods:
     def test_returns_matches(self, fresh_harness: MockHarness):
         result = fresh_harness._exec_search_foods({"queries": ["potato"]})
