@@ -94,7 +94,7 @@ def _append_tool_result(conversation: str, result: dict, model_type: str) -> str
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Mininio AI chat — test the fine-tuned model interactively")
-    parser.add_argument("--model-dir", default="finetuning/output/lfm/merged_16bit")
+    parser.add_argument("--model-dir", default="finetuning/output/lfm/lfm/merged_16bit")
     parser.add_argument("--model-type", default="lfm", choices=["lfm", "gemma"])
     parser.add_argument("--settings-idx", type=int, default=0)
     parser.add_argument("--lang", default="en")
