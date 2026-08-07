@@ -22,7 +22,7 @@ def report_token_lengths(
     lengths: list[int] = []
 
     for row in sample:
-        tokens = tokenizer([row["text"]], add_special_tokens=False, truncation=False)
+        tokens = tokenizer(text=[row["text"]], add_special_tokens=False, truncation=False)
         lengths.append(len(tokens["input_ids"][0]))
 
     lengths.sort()
@@ -69,8 +69,8 @@ def check_bos_prefix(
 
         if text.startswith(bos_text):
             bos_id = tokenizer.bos_token_id
-            tokenized_with = tokenizer([text], add_special_tokens=True, truncation=True, max_length=8)
-            tokenized_without = tokenizer([text], add_special_tokens=False, truncation=True, max_length=8)
+            tokenized_with = tokenizer(text=[text], add_special_tokens=True, truncation=True, max_length=8)
+            tokenized_without = tokenizer(text=[text], add_special_tokens=False, truncation=True, max_length=8)
             with_ids = tokenized_with["input_ids"][0]
             double_bos = (
                 bos_id is not None
