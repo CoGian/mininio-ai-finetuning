@@ -5,11 +5,11 @@ import sys
 from pathlib import Path
 from typing import Optional
 
+os.environ["HF_HUB_OFFLINE"] = "1"
+
 import torch
 from loguru import logger
 from transformers import AutoModelForCausalLM, AutoTokenizer
-
-os.environ["HF_HUB_OFFLINE"] = "1"
 
 from data.food_db_loader import load_food_db
 from data.log_config import setup_logging

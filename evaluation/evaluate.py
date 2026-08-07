@@ -6,10 +6,10 @@ import re
 import time
 from typing import Any, Optional
 
+os.environ["HF_HUB_OFFLINE"] = "1"
+
 import torch
 from loguru import logger
-
-os.environ["HF_HUB_OFFLINE"] = "1"
 
 from evaluation.criteria import FINAL_RESULT_TOLERANCE, EvalMetrics
 
