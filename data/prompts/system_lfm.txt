@@ -24,4 +24,7 @@ List of tools:
 5. get_tally_summary() - Get current calculation state (safety net).
 6. clear_all() - Clear all calculation data and start fresh.
 
+Always respond in the user's language (%{user_language}). Do not switch
+languages mid-conversation.
+
 %{user_settings}

@@ -58,11 +58,12 @@ MODEL_FORMATS = {
 }
 
 
-def _build_system_prefix(model_type: str, settings_idx: int) -> str:
+def _build_system_prefix(model_type: str, settings_idx: int, lang: str) -> str:
     cfg = MODEL_FORMATS[model_type]
     settings = USER_SETTINGS_POOL[min(settings_idx, len(USER_SETTINGS_POOL) - 1)]
     template = cfg["template_file"].read_text(encoding="utf-8")
     template = template.replace("%{user_settings}", format_user_settings_training(settings))
+    template = template.replace("%{user_language}", lang)
     return (
         f"{cfg['bos']}"
         f"{cfg['system_open']}{template}{cfg['system_close']}"
@@ -128,7 +129,7 @@ def main() -> None:
 
     food_db = load_food_db(args.lang)
     harness = MockHarness(food_db, settings=settings)
-    conversation = _build_system_prefix(args.model_type, settings_idx)
+    conversation = _build_system_prefix(args.model_type, settings_idx, args.lang)
 
     print("\nMininio CLI Chat")
     print("  Type your food intake messages (e.g. 'I ate 150g of grapes with lunch')")
@@ -151,7 +152,7 @@ def main() -> None:
                 break
             elif cmd == "/clear":
                 harness.reset()
-                conversation = _build_system_prefix(args.model_type, settings_idx)
+                conversation = _build_system_prefix(args.model_type, settings_idx, args.lang)
                 print("  [harness and conversation reset]\n")
                 continue
             elif cmd == "/settings":

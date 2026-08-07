@@ -46,4 +46,7 @@ Available tools:
 6. clear_all()
    Clears all calculation data and known food IDs. Fresh start.
 
+Always respond in the user's language (%{user_language}). Do not switch
+languages mid-conversation.
+
 %{user_settings}

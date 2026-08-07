@@ -87,6 +87,7 @@ def _save_formatted(train, eval_ds, prompt_template, output_dir, formatter):
                 idx = conv.user_settings_idx if conv.user_settings_idx is not None else 0
                 settings_text = format_user_settings_training(USER_SETTINGS_POOL[idx])
                 prompt = prompt_template.replace("%{user_settings}", settings_text)
+                prompt = prompt.replace("%{user_language}", conv.language)
                 text = formatter(conv, prompt)
                 f.write(json.dumps({"text": text}, ensure_ascii=False) + "\n")
         logger.info(f"  Saved {path} ({len(convs)} examples)")
