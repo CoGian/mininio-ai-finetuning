@@ -66,14 +66,14 @@ def compute_masked_labels(
     max_length: int = 4096,
 ) -> tuple[list[int], list[int]]:
     encoding = tokenizer(
-        text=text,
+        text=[text],
         add_special_tokens=False,
         truncation=True,
         max_length=max_length,
         return_offsets_mapping=True,
     )
-    input_ids: list[int] = encoding["input_ids"]
-    offset_mapping: list[tuple[int, int]] = encoding["offset_mapping"]
+    input_ids: list[int] = encoding["input_ids"][0]
+    offset_mapping: list[tuple[int, int]] = encoding["offset_mapping"][0]
 
     if model_type == "lfm":
         char_spans = find_assistant_spans_lfm(text)

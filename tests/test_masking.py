@@ -1,4 +1,5 @@
 from finetuning.common.masking import (
+    compute_masked_labels,
     find_assistant_spans_gemma,
     find_assistant_spans_lfm,
     map_char_spans_to_token_indices,
@@ -150,3 +151,39 @@ class TestMapCharSpansToTokenIndices:
         char_spans = [(0, 10)]
         result = map_char_spans_to_token_indices(char_spans, offset_mapping)
         assert result == {1, 2}
+
+
+class _BatchedTokenizer:
+    def __call__(self, **kw):
+        t = kw.get("text", [""])
+        t = t[0] if isinstance(t, list) else t
+        n = len(t)
+        ids = list(range(1, n + 1))
+        om = [(i, i + 1) for i in range(n)]
+        return {"input_ids": [ids], "offset_mapping": [om]}
+
+
+class TestComputeMaskedLabels:
+    _text = "<|im_start|>assistant\ntext<|im_end|>"
+
+    def test_lfm_batched_output(self):
+        tok = _BatchedTokenizer()
+        input_ids, labels = compute_masked_labels(self._text, tok, "lfm", max_length=128)
+        assert len(input_ids) == len(self._text)
+        assert len(labels) == len(self._text)
+        assert any(l != -100 for l in labels)
+
+    def test_gemma_batched_output(self):
+        tok = _BatchedTokenizer()
+        input_ids, labels = compute_masked_labels(
+            "<|turn>model\ntext<turn|>", tok, "gemma", max_length=128
+        )
+        assert len(input_ids) == 24
+        assert any(l != -100 for l in labels)
+
+    def test_empty_assistant_spans_all_masked(self):
+        tok = _BatchedTokenizer()
+        input_ids, labels = compute_masked_labels(
+            "just user text no assistant", tok, "lfm", max_length=128
+        )
+        assert all(l == -100 for l in labels)
