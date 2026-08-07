@@ -183,11 +183,12 @@ def evaluate_model(
             if is_clarification:
                 total_clarify += 1
 
-            conversation = ""
-            for turn in turns:
-                if turn["role"] == "user":
-                    conversation += _format_turn(turn, model_type)
-                    break
+            delimiter = "<|im_start|>assistant\n" if model_type == "lfm" else "<|turn>model\n"
+            first_assistant = text.find(delimiter)
+            if first_assistant == -1:
+                logger.warning("No assistant/model turn found in eval example, skipping")
+                continue
+            conversation = text[:first_assistant]
 
             model_tool_calls: list[dict] = []
             model_final_text = ""
