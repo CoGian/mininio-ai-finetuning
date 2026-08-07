@@ -108,7 +108,8 @@ def main() -> None:
     dtype = torch.float32 if device == "cpu" else torch.float16
     logger.info(f"Loading model from {args.model_dir} ({device}, {dtype})")
 
-    tokenizer = AutoTokenizer.from_pretrained(args.model_dir, local_files_only=True)
+    model_dir = str(Path(args.model_dir).resolve())
+    tokenizer = AutoTokenizer.from_pretrained(model_dir, local_files_only=True)
     if args.model_type == "gemma":
         try:
             from unsloth.chat_templates import get_chat_template
@@ -120,7 +121,7 @@ def main() -> None:
                            "Gemma may not produce correct output without the chat template.")
 
     model = AutoModelForCausalLM.from_pretrained(
-        args.model_dir,
+        model_dir,
         torch_dtype=dtype,
         device_map=device,
         local_files_only=True,
