@@ -527,26 +527,37 @@ def _hash_user_utterances(conv: Conversation) -> str:
 
 import collections
 
-def _generate_work_distribution(count: int, existing_counts: dict = None) -> list:
+def _generate_work_distribution(count: int, existing_counts: dict = None, scenarios: list = None) -> list:
     if existing_counts is None:
         existing_counts = {}
-        
+
     distribution = []
     remaining_target = count
-    scenarios = list(SCENARIO_WEIGHTS.keys())
-    
-    for scenario in scenarios[:-1]:
+    target_scenarios = [s for s in SCENARIO_WEIGHTS.keys() if scenarios is None or s in scenarios]
+
+    if scenarios is not None:
+        per_scenario = count // len(target_scenarios)
+        leftover = count % len(target_scenarios)
+        for i, scenario in enumerate(target_scenarios):
+            existing = existing_counts.get(scenario.value, 0)
+            extra = 1 if i < leftover else 0
+            n_to_generate = max(0, per_scenario + extra - existing)
+            distribution.append((scenario, n_to_generate))
+        return distribution
+
+    scenarios_full = list(SCENARIO_WEIGHTS.keys())
+    for scenario in scenarios_full[:-1]:
         target = round(count * SCENARIO_WEIGHTS[scenario])
         existing = existing_counts.get(scenario.value, 0)
         n_to_generate = max(0, target - existing)
         distribution.append((scenario, n_to_generate))
         remaining_target -= target
-        
-    last_scenario = scenarios[-1]
+
+    last_scenario = scenarios_full[-1]
     existing_last = existing_counts.get(last_scenario.value, 0)
     n_to_generate = max(0, remaining_target - existing_last)
     distribution.append((last_scenario, n_to_generate))
-    
+
     return distribution
 
 
@@ -556,6 +567,7 @@ async def generate_language_dataset(
     max_concurrent: int = 10,
     resume: bool = True,
     global_tracker: Optional[GlobalProgressTracker] = None,
+    scenarios: Optional[list] = None,
 ):
     output_path = Path(f"data/output/raw/{lang}.jsonl")
     output_path.parent.mkdir(parents=True, exist_ok=True)
@@ -563,6 +575,7 @@ async def generate_language_dataset(
     completed = set()
     existing_count = 0
     existing_counts_by_scenario = collections.defaultdict(int)
+    scenario_set = set(s.value for s in scenarios) if scenarios else None
     if resume and output_path.exists():
         with open(output_path, encoding="utf-8") as f:
             for line in f:
@@ -572,6 +585,8 @@ async def generate_language_dataset(
                 try:
                     conv_data = json.loads(line)
                     scenario_type = conv_data["scenario_type"]
+                    if scenario_set and scenario_type not in scenario_set:
+                        continue
                     key = (scenario_type, _hash_user_utterances_raw(conv_data))
                     completed.add(key)
                     existing_counts_by_scenario[scenario_type] += 1
@@ -584,7 +599,7 @@ async def generate_language_dataset(
     meta_tracker = ConversationMetaTracker()
     semaphore = asyncio.Semaphore(max_concurrent)
 
-    work_items = _generate_work_distribution(count, existing_counts_by_scenario)
+    work_items = _generate_work_distribution(count, existing_counts_by_scenario, scenarios)
     generated = 0
     failed = 0
     skipped = 0
@@ -653,7 +668,7 @@ def _hash_user_utterances_raw(conv_data: dict) -> str:
 
 
 async def main(languages, count_per_lang, dry_run, validate_only, max_concurrent,
-               verbose, log_file, debug_harness):
+               verbose, log_file, debug_harness, scenarios=None):
     log_path = None
     if log_file:
         if log_file == "auto":
@@ -697,9 +712,16 @@ async def main(languages, count_per_lang, dry_run, validate_only, max_concurrent
         logger.info(f"Would generate {count_per_lang} conversations per language")
         logger.info(f"Languages: {', '.join(languages)} ({len(languages)})")
         logger.info(f"Total: {len(languages) * count_per_lang} conversations")
-        for scenario, weight in SCENARIO_WEIGHTS.items():
-            n = round(count_per_lang * weight)
-            logger.info(f"  {scenario.value}: {n} per language")
+        if scenarios:
+            logger.info(f"Scenarios filter: {', '.join(s.value for s in scenarios)}")
+            selected = [s for s in SCENARIO_WEIGHTS.keys() if s in scenarios]
+            per = count_per_lang // len(selected)
+            for s in selected:
+                logger.info(f"  {s.value}: {per} per language")
+        else:
+            for scenario, weight in SCENARIO_WEIGHTS.items():
+                n = round(count_per_lang * weight)
+                logger.info(f"  {scenario.value}: {n} per language")
         return
 
     total_items = len(languages) * count_per_lang
@@ -714,7 +736,7 @@ async def main(languages, count_per_lang, dry_run, validate_only, max_concurrent
     with StepTimer("Full generation run"):
         results = []
         for lang in languages:
-            result = await generate_language_dataset(lang, count_per_lang, max_concurrent, global_tracker)
+            result = await generate_language_dataset(lang, count_per_lang, max_concurrent, global_tracker, scenarios=scenarios)
             results.append(result)
 
     total_gen = sum(results)
@@ -741,6 +763,8 @@ if __name__ == "__main__":
     parser.add_argument("--verbose", action="store_true")
     parser.add_argument("--log-file", nargs="?", const="auto", default=None)
     parser.add_argument("--debug-harness", action="store_true")
+    parser.add_argument("--scenarios", default=None,
+                        help="Comma-separated scenario types (e.g. correction_quantity,tally_summary)")
     args = parser.parse_args()
 
     languages = (
@@ -748,7 +772,11 @@ if __name__ == "__main__":
         if args.languages == "all"
         else args.languages.split(",")
     )
+    scenario_types = None
+    if args.scenarios:
+        scenario_types = [ScenarioType(s.strip().upper()) for s in args.scenarios.split(",")]
     asyncio.run(main(
         languages, args.count_per_lang, args.dry_run, args.validate_only,
         args.max_concurrent, args.verbose, args.log_file, args.debug_harness,
+        scenarios=scenario_types,
     ))

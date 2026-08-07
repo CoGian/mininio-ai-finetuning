@@ -10,9 +10,12 @@ class ScenarioType(str, Enum):
     EXPLICIT_MEAL_TIME = "EXPLICIT_MEAL_TIME"
     AMBIGUOUS_FOOD = "AMBIGUOUS_FOOD"
     CORRECTION_REMOVAL = "CORRECTION_REMOVAL"
+    CORRECTION_QUANTITY = "CORRECTION_QUANTITY"
+    GLUCOSE_QUANTITY_CORRECTION = "GLUCOSE_QUANTITY_CORRECTION"
     GLUCOSE_ONLY_CHECK = "GLUCOSE_ONLY_CHECK"
     INCOMPLETE_INFO = "INCOMPLETE_INFO"
     FOOD_NOT_FOUND = "FOOD_NOT_FOUND"
+    TALLY_SUMMARY = "TALLY_SUMMARY"
 
 
 class ToolCall(BaseModel):
@@ -37,15 +40,18 @@ class Conversation(BaseModel):
 
 
 SCENARIO_WEIGHTS = {
-    ScenarioType.SIMPLE_SINGLE_FOOD: 0.15,
+    ScenarioType.SIMPLE_SINGLE_FOOD: 0.11,
     ScenarioType.MULTIPLE_FOODS_NO_GLUCOSE: 0.20,
     ScenarioType.MULTIPLE_FOODS_WITH_GLUCOSE: 0.25,
     ScenarioType.EXPLICIT_MEAL_TIME: 0.10,
-    ScenarioType.AMBIGUOUS_FOOD: 0.10,
-    ScenarioType.CORRECTION_REMOVAL: 0.08,
-    ScenarioType.GLUCOSE_ONLY_CHECK: 0.05,
-    ScenarioType.INCOMPLETE_INFO: 0.05,
-    ScenarioType.FOOD_NOT_FOUND: 0.02,
+    ScenarioType.AMBIGUOUS_FOOD: 0.08,
+    ScenarioType.CORRECTION_REMOVAL: 0.07,
+    ScenarioType.CORRECTION_QUANTITY: 0.05,
+    ScenarioType.GLUCOSE_QUANTITY_CORRECTION: 0.02,
+    ScenarioType.GLUCOSE_ONLY_CHECK: 0.04,
+    ScenarioType.INCOMPLETE_INFO: 0.04,
+    ScenarioType.FOOD_NOT_FOUND: 0.01,
+    ScenarioType.TALLY_SUMMARY: 0.03,
 }
 
 EXPECTED_SEQUENCES = {
@@ -78,6 +84,18 @@ EXPECTED_SEQUENCES = {
     ],
     ScenarioType.FOOD_NOT_FOUND: [
         ["search_foods", "text"],
+    ],
+    ScenarioType.CORRECTION_QUANTITY: [
+        ["search_foods", "add_foods_to_tally", "calculate_final", "text"],
+        ["remove_foods_from_tally", "add_foods_to_tally", "calculate_final", "text"],
+    ],
+    ScenarioType.TALLY_SUMMARY: [
+        ["search_foods", "add_foods_to_tally", "text"],
+        ["get_tally_summary", "text"],
+    ],
+    ScenarioType.GLUCOSE_QUANTITY_CORRECTION: [
+        ["search_foods", "add_foods_to_tally", "calculate_final", "text"],
+        ["calculate_final", "text"],
     ],
 }
 
@@ -156,5 +174,35 @@ SCENARIO_INSTRUCTIONS = {
         "The assistant searches, gets an empty result (or no match for that specific query), "
         "and politely explains the food wasn't found. Suggest alternatives if similar foods exist. "
         "DO NOT hallucinate food IDs - accept that search returned nothing."
+    ),
+    ScenarioType.CORRECTION_QUANTITY: (
+        "Two-phase conversation: "
+        "PHASE 1 (turns 1-4): Full flow with 1-2 foods + optional BG, complete calculation. "
+        "PHASE 2 (turns 5-8): User corrects a quantity: \"correction, it was 100g, not 1000g\" "
+        "or \"actually I ate 200g of [food]\" or \"sorry, the potatoes were only 150g\". "
+        "The assistant MUST: (1) read entry_id from CURRENT TALLY, (2) call remove_foods_from_tally "
+        "with that entry_id, (3) call add_foods_to_tally with the corrected quantity using food_id "
+        "from KNOWN FOOD IDS (do NOT search again), (4) call calculate_final to get updated dose. "
+        "Present the corrected result showing the new total and dose."
+    ),
+    ScenarioType.TALLY_SUMMARY: (
+        "Two-phase conversation or standalone: "
+        "PHASE 1 (turns 1-3): User mentions 1-2 foods, assistant searches and adds, "
+        "then asks \"Anything else?\" (no calculate_final unless requested). "
+        "PHASE 2 (turns 4-5): User asks \"what's in my tally?\" or \"show me what I've added\" "
+        "or \"what foods are in my tally?\". Assistant calls get_tally_summary(), then reads "
+        "the entries from the result and reports them back in natural language WITHOUT "
+        "mentioning entry_id numbers: "
+        "\"Your tally has: Grapes 200g = 35.30g carbs, Potatoes 150g = 26.47g carbs. "
+        "Total: 61.77g carbs.\" Do NOT expose internal entry IDs to the user."
+    ),
+    ScenarioType.GLUCOSE_QUANTITY_CORRECTION: (
+        "Two-phase conversation: "
+        "PHASE 1 (turns 1-4): Full flow with 1-2 foods + blood glucose, complete calculation "
+        "with a specific BG value (e.g., 150). Assistant presents full breakdown. "
+        "PHASE 2 (turns 5-6): User corrects the glucose reading: \"sorry, my sugar was 180, not 150\" "
+        "or \"actually my glucose was 200\". The assistant simply calls calculate_final again with "
+        "the corrected blood_glucose value — NO tally changes needed (no remove/re-add). "
+        "Present the updated dose showing how the glucose correction changed."
     ),
 }

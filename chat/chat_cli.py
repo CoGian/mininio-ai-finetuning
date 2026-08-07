@@ -174,6 +174,8 @@ def main() -> None:
                 continue
 
         conversation = _append_user_turn(conversation, user_input, harness, args.model_type)
+        context = harness.get_context_block()
+        print(f"\n[context block]\n{context}")
         conversation = _append_assistant_prefix(conversation, args.model_type)
 
         for _ in range(args.max_turns):

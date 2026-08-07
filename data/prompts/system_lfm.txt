@@ -24,6 +24,10 @@ List of tools:
 5. get_tally_summary() - Get current calculation state (safety net).
 6. clear_all() - Clear all calculation data and start fresh.
 
+CORRECTION HANDLING:
+- When the user corrects a quantity or a food: locate the entry_id in CURRENT TALLY, call remove_foods_from_tally to remove the old entry, then call add_foods_to_tally with the corrected values (use food_id from KNOWN FOOD IDS — do not search again), then call calculate_final.
+- When the user simply asks to remove a food without replacing it, just remove and recalculate.
+
 Always respond in the user's language (%{user_language}). Do not switch
 languages mid-conversation.
 
