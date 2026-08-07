@@ -1,6 +1,7 @@
 import argparse
 import json
 import math
+import os
 import re
 import time
 from typing import Any, Optional
@@ -91,8 +92,11 @@ def _parse_lfm_args(raw: str) -> dict:
         if val.startswith("[") and val.endswith("]"):
             inner = val[1:-1].strip()
             if inner.startswith("{"):
-                items = json.loads(f"[{inner}]")
-                args[key] = items
+                try:
+                    items = json.loads(f"[{inner}]")
+                    args[key] = items
+                except json.JSONDecodeError:
+                    logger.trace(f"Skipping malformed arg list: {val[:100]}")
             else:
                 items = re.findall(r'"([^"]*)"', inner)
                 args[key] = items
@@ -122,26 +126,52 @@ def evaluate_model(
     max_new_tokens: int = 256,
     max_turns: int = 8,
 ) -> EvalMetrics:
-    if model_type == "lfm":
-        from unsloth import FastLanguageModel
+    is_merged = os.path.isfile(os.path.join(checkpoint_dir, "model.safetensors"))
 
-        model, tokenizer = FastLanguageModel.from_pretrained(
-            model_name=checkpoint_dir,
-            max_seq_length=4096,
-            load_in_4bit=True,
+    if is_merged:
+        from transformers import AutoModelForCausalLM, AutoTokenizer
+
+        tokenizer = AutoTokenizer.from_pretrained(checkpoint_dir)
+        if model_type == "gemma":
+            try:
+                from unsloth.chat_templates import get_chat_template
+                tokenizer = get_chat_template(tokenizer, chat_template="gemma-4")
+            except ImportError:
+                logger.warning("Unsloth chat template unavailable for Gemma")
+
+        device = "cuda" if torch.cuda.is_available() else "cpu"
+        dtype = torch.float16 if device == "cuda" else torch.float32
+        model = AutoModelForCausalLM.from_pretrained(
+            checkpoint_dir,
+            torch_dtype=dtype,
+            device_map=device,
         )
-        FastLanguageModel.for_inference(model)
+        model.eval()
     else:
-        from unsloth import FastModel
-        from unsloth.chat_templates import get_chat_template
+        try:
+            if model_type == "lfm":
+                from unsloth import FastLanguageModel
 
-        model, tokenizer = FastModel.from_pretrained(
-            model_name=checkpoint_dir,
-            max_seq_length=4096,
-            load_in_4bit=True,
-        )
-        tokenizer = get_chat_template(tokenizer, chat_template="gemma-4")
-        FastModel.for_inference(model)
+                model, tokenizer = FastLanguageModel.from_pretrained(
+                    model_name=checkpoint_dir,
+                    max_seq_length=4096,
+                    load_in_4bit=True,
+                )
+                FastLanguageModel.for_inference(model)
+            else:
+                from unsloth import FastModel
+                from unsloth.chat_templates import get_chat_template
+
+                model, tokenizer = FastModel.from_pretrained(
+                    model_name=checkpoint_dir,
+                    max_seq_length=4096,
+                    load_in_4bit=True,
+                )
+                tokenizer = get_chat_template(tokenizer, chat_template="gemma-4")
+                FastModel.for_inference(model)
+        except ImportError:
+            logger.error("Unsloth required for LoRA adapter loading but not available")
+            raise
 
     parse_turns = parse_lfm_turns if model_type == "lfm" else parse_gemma_turns
     parse_tc = parse_tool_call_lfm if model_type == "lfm" else parse_tool_call_gemma

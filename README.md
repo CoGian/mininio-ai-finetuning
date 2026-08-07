@@ -137,14 +137,26 @@ Reference scripts:
 - `lfm2_5_sft_with_unsloth.py` — LFM2.5 fine-tuning with LoRA + ChatML format
 - `gemma_4_finetuning_quide` — Gemma 4 fine-tuning with QLoRA + Unsloth chat template
 
-## Evaluation & Export
+## Evaluation & Chat & Export
 
 ```bash
-# Evaluate fine-tuned model on held-out 701 conversations
+# Evaluate fine-tuned model (merged 16-bit, no Unsloth needed)
+python evaluation/evaluate.py \
+  --checkpoint-dir finetuning/output/lfm/merged_16bit \
+  --model-type lfm \
+  --eval-path data/output/lfm/eval.jsonl
+
+# Evaluate LoRA adapter (requires Unsloth, e.g. on training VM)
 python evaluation/evaluate.py \
   --checkpoint-dir finetuning/output/lfm/lora_adapter \
   --model-type lfm \
   --eval-path data/output/lfm/eval.jsonl
+
+# Interactive CLI chat (test model with tool execution)
+python -m chat.chat_cli --model-type lfm
+
+# Chat with custom settings and temperature
+python -m chat.chat_cli --model-type lfm --settings-idx 2 --temp 0.9
 
 # Export LFM → GGUF for llama.cpp Android runtime
 python export/convert_lfm_gguf.py \
@@ -192,7 +204,7 @@ python export/convert_gemma_litertlm.py \
 │   │   └── gemma_formatter.py  # Gemma Unsloth converter
 │   └── food_db/                # Food database CSVs (10 languages)
 │
-├── tests/                      # pytest unit tests (295 tests)
+├── tests/                      # pytest unit tests (346 tests)
 │   ├── conftest.py
 │   ├── test_food_db_loader.py
 │   ├── test_mock_harness.py
@@ -201,7 +213,9 @@ python export/convert_gemma_litertlm.py \
 │   ├── test_generate.py
 │   ├── test_formatters.py
 │   ├── test_assemble.py
-│   └── test_masking.py
+│   ├── test_masking.py
+│   ├── test_data_loader.py
+│   └── test_evaluate.py
 │
 ├── finetuning/                 # Model fine-tuning
 │   ├── common/
@@ -218,6 +232,9 @@ python export/convert_gemma_litertlm.py \
 ├── evaluation/                 # Model evaluation & selection
 │   ├── criteria.py             # Weighted scoring (6 metrics, 40/25/15/10/5/5)
 │   └── evaluate.py             # Harness-replay evaluator
+│
+├── chat/                       # Interactive chat CLI
+│   └── chat_cli.py             # Test fine-tuned model interactively (GPU/CPU)
 │
 ├── export/                     # Model export for Android
 │   ├── convert_lfm_gguf.py     # LFM → GGUF (q4_k_m/q5_k_m/q8_0/f16)

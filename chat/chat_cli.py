@@ -48,7 +48,7 @@ MODEL_FORMATS = {
         "system_close": "<turn|>",
         "user_open": "<|turn>user\n",
         "user_close": "<turn|>",
-        "tool_open": "<|turn>model\nTool results:\n",
+        "tool_open": "<|turn>model\n",
         "tool_close": "<turn|>",
         "assistant_marker": "<|turn>model\n",
         "template_file": Path("data/prompts/system_gemma.txt"),

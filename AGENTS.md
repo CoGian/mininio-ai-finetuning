@@ -44,6 +44,7 @@ two candidate models (LFM2.5 + Gemma 4) via Unsloth + TRL SFTTrainer.
 | `finetuning/gemma/train_gemma.py` | Gemma 4 training script (Unsloth + TRL SFTTrainer) |
 | `evaluation/criteria.py` | Weighted scoring: 6 metrics (40/25/15/10/5/5) |
 | `evaluation/evaluate.py` | Harness-replay evaluator with tool result injection |
+| `chat/chat_cli.py` | Interactive CLI chat — raw LLM output + tool results visible |
 | `export/convert_lfm_gguf.py` | LFM → GGUF (q4_k_m/q5_k_m/q8_0/f16) |
 | `export/convert_gemma_litertlm.py` | Gemma → LiteRT-LM (int4/int8) |
 | `docs/TRAINING_PROCEDURE.md` | Training design rationale: format, loss, optimizer, hyperparams, post-training |
@@ -99,6 +100,12 @@ python -m finetuning.lfm.train_lfm --report-to wandb
 # Evaluate fine-tuned model
 python evaluation/evaluate.py --checkpoint-dir finetuning/output/lfm/lora_adapter --model-type lfm --eval-path data/output/lfm/eval.jsonl
 
+# Interactive chat (GPU, local merged model)
+python -m chat.chat_cli --model-type lfm
+
+# Chat with custom settings
+python -m chat.chat_cli --model-type lfm --settings-idx 2 --temp 0.9
+
 # Export LFM → GGUF
 python export/convert_lfm_gguf.py --lora-dir finetuning/output/lfm/lora_adapter --output-dir export/lfm --quant q4_k_m
 
@@ -108,7 +115,7 @@ python export/convert_gemma_litertlm.py --merged-dir finetuning/output/gemma/mer
 
 ## Testing
 
-- `pytest tests/ -v` — 295 tests across 9 files
+- `pytest tests/ -v` — 346 tests across 10 files
 - Run from project root; fixtures use inline data (no file I/O except CSV load tests)
 - Tests cover: UnitNormalizer, MockHarness, all 8 validators, formatters, work distribution, hashing, Pydantic models, assemble logic, custom masking
 
