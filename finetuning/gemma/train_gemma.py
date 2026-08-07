@@ -35,7 +35,7 @@ def main() -> None:
     parser.add_argument("--save-steps", type=int, default=500)
     parser.add_argument("--logging-steps", type=int, default=25)
     parser.add_argument("--seed", type=int, default=3407)
-    parser.add_argument("--fp16", action="store_true")
+    parser.add_argument("--bf16", action="store_true", help="Use bfloat16 (Gemma default)")
     parser.add_argument("--report-to", default=None)
     args = parser.parse_args()
 
@@ -144,7 +144,8 @@ def main() -> None:
         max_length=None,
         seed=config.seed,
         report_to=report_to,
-        fp16=args.fp16,
+        fp16=False,
+        bf16=args.bf16,
         dataset_text_field="",
         dataset_kwargs={"skip_prepare_dataset": True},
         eval_strategy="steps",
